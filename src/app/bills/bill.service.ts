@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { LogEntry } from '../shared/log-entry';
 import { Bill, BillAdapter } from './bill';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -45,9 +45,17 @@ export class BillService {
    public postBills() {
 
     return this.http.post(this.accessPointUrl, null).pipe(
+      catchError(this.handleError),
       map((data:any []) => data.map((item: any) => this.adapter.fromJsonToModel(item))),
     );
 
+  }
+  
+  private handleError(error: HttpErrorResponse) {
+    if(error.status == 422){
+      console.error("Bills for the running month have already been created.");
+    }
+    return throwError("Bills for the running month have already been created. Please delete the bills for this month and add them again.");
   }
 
   public remove(bill: Bill) {

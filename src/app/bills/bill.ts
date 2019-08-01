@@ -6,8 +6,7 @@ import { Adapter } from "../models/adapter";
 
 export class Bill {
 
-    "id": number; //how to map over object properties from backend?
-    //"billId": number;
+    "id": number; 
     "total": number;
     "flat": number;
     "sumToPay": number;
@@ -45,7 +44,7 @@ export class BillAdapter implements Adapter<Bill> {
             item.sumToPay,
             item.monthToPayFor,
             item.paymentDeadline,
-            item.partialPayAmount,
+            item.partialPayAmount = item.sumToPay,
             item.status, 
             item.logs
         )
@@ -60,7 +59,6 @@ export class BillAdapter implements Adapter<Bill> {
             "SumToPay": bill.sumToPay,
             "MonthToPayFor": bill.monthToPayFor, 
             "PaymentDeadline": bill.paymentDeadline,
-            "PartialPayAmount": bill.partialPayAmount,
             "Status": bill.status, 
             "Logs": bill.logs
         }

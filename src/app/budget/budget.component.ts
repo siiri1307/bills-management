@@ -3,7 +3,7 @@ import { Component } from "@angular/core";
 
 
 @Component({
-    selector: 'budget',
+    selector: 'app-budget',
     templateUrl: './budget.component.html'
 })
 
@@ -15,10 +15,7 @@ export class BudgetComponent{
 
     constructor(private budgetService: BudgetService){
         this.budgetService.getTotal().subscribe((data: any) => this.budgetTotal = data);
-        //this.budgetService.getById(1).subscribe((budget: any) => this.budgetWithID1 = budget);
     }
 
-    ngOnInit(): void {
-        //this.budget = this._budgetService.getBudget();
-    }
+    ngOnInit(): void {}
 }

@@ -24,7 +24,7 @@
                 <div class='col-md-6'></div>
             </div>
 
-            <table mat-table class="mat-elevation-z8" [dataSource]="billsData">
+            <mat-table class="mat-elevation-z8" [dataSource]="billsData">
 
                 <ng-container matColumnDef="flat">
                     <th mat-header-cell *matHeaderCellDef>Apartment no</th>
@@ -57,7 +57,7 @@
                 
 
 
-            <table>
+            </mat-table>
 
             <div class='table-responsive'>
                 <table class='table' *ngIf='billsData && billsData.length'>

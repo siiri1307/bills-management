@@ -1,0 +1,140 @@
+<body>
+    <div class="bills-view-container">
+        <div class="buttons-group">
+            <button class='btn btn-info btn-sm' (click)='downloadLogs()'><i class="fas fa-download fa-fw"></i>Download logs</button>
+            <button class='btn btn-success btn-sm' data-toggle="tooltip" data-placement="bottom" title="Add bills for the running month" (click)='addBills()'><i class="fas fa-plus fa-fw"></i>Add bills</button>
+            <button class='btn btn-info btn-sm' data-toggle="tooltip" data-placement="bottom" title="Download bills for the running month as a zip of PDFs" (click)='downloadBillsForRunningMonthAsPDF()'><i class="fas fa-file-pdf fa-fw"></i>Export bills</button>
+        </div>
+    </div>
+
+    <form class="form-inline" id="bill-select-form">
+        <div class="bills-view-container form-group">
+            <label id="bill-status-label">Bill status</label>
+            <select class="form-control form-control-sm" (change)="filterBills($event.target.value)">
+                <option value="0">All</option>
+                <option value="1">Paid</option>
+                <option value="2">Partially paid</option>
+                <option value="3">Unpaid</option>
+            </select>  
+        </div>
+    </form>
+
+
+    <div class="bills-view-container">
+        <table mat-table class="mat-elevation-z8" [dataSource]="billsData" multiTemplateDataRows matSort matSortDirection="desc" matSortActive="monthToPayFor">
+
+            <ng-container matColumnDef="flat">
+                <th mat-header-cell *matHeaderCellDef>Apartment no</th>
+                <td mat-cell *matCellDef="let bill">{{bill.flat}}</td>
+            </ng-container>
+            
+            <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef>Sum</th>
+                <td mat-cell *matCellDef="let bill">{{bill.total}}</td>
+            </ng-container>
+            
+            <ng-container matColumnDef="sumToPay">
+                <th mat-header-cell *matHeaderCellDef>Still to pay</th>
+                <td mat-cell *matCellDef="let bill">{{bill.sumToPay}}</td>
+            </ng-container>
+            
+            <ng-container matColumnDef="monthToPayFor">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Period</th>
+                <td mat-cell *matCellDef="let bill">{{bill.monthToPayFor | toMonthName}}</td>
+            </ng-container>
+            
+            <ng-container matColumnDef="paymentDeadline">
+                <th mat-header-cell *matHeaderCellDef>Deadline</th>
+                <td mat-cell *matCellDef="let bill">{{bill.paymentDeadline | date: "dd/MM/yyyy"}}</td>
+            </ng-container>
+            
+            <ng-container matColumnDef="delete">
+                <th mat-header-cell *matHeaderCellDef>Delete</th>
+                <td mat-cell *matCellDef="let bill" (click)="$event.stopPropagation()">
+                    <button id="delete-bill" (click)='delete(bill)'><i class="fa fa-trash fa-2x"></i></button>
+                </td>
+            </ng-container>
+                    
+            <ng-container matColumnDef="expanded">
+                <td mat-cell *matCellDef="let bill" [attr.colspan]="columnsToDisplay.length">
+                    <div class="example-element-detail" [@detailExpand]="bill == expandedElement ? 'expanded' : 'collapsed'"> 
+                        <div class="expandable">
+                            <app-bill-partial-pay [bill]="bill" (submitPaidAmount)="updateBill($event.bill, $event.comment)"></app-bill-partial-pay>
+                        </div>
+                    </div>
+                </td>
+            </ng-container>
+            
+            <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    
+            <tr mat-row *matRowDef="let bill; columns: columnsToDisplay" 
+                class="example-element-row"
+                [class.example-expanded-row]="expandedElement === bill"
+                (click)="expandedElement = expandedElement === bill ? null : bill">
+            </tr>
+    
+            <tr mat-row *matRowDef="let row; columns: ['expanded']" class="example-detail-row"></tr>
+            
+        </table>
+            
+        <mat-paginator
+            [pageSize]="3"
+            [pageSizeOptions]="[3,6]">
+        </mat-paginator>
+
+        <div #alert *ngIf="errorMessage !== undefined" class="alert alert-warning fade show" role="alert">
+            {{errorMessage}}
+            <button type="button" class="close" (click)="hideAlert()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+
+</body>
+     
+
+
+
+    <!--
+    <table mat-table class="mat-elevation-z8" [dataSource]="billsData">
+
+        <ng-container matColumnDef="flat">
+            <th mat-header-cell *matHeaderCellDef>Apartment no</th>
+            <td mat-cell *matCellDef="let bill">{{bill.flat}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="total">
+            <th mat-header-cell *matHeaderCellDef>Sum</th>
+            <td mat-cell *matCellDef="let bill">{{bill.total}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="sumToPay">
+            <th mat-header-cell *matHeaderCellDef>Still to pay</th>
+            <td mat-cell *matCellDef="let bill">{{bill.sumToPay}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="monthToPayFor">
+            <th mat-header-cell *matHeaderCellDef>Period</th>
+            <td mat-cell *matCellDef="let bill">{{bill.monthToPayFor | toMonthName}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="paymentDeadline">
+            <th mat-header-cell *matHeaderCellDef>Deadline</th>
+            <td mat-cell *matCellDef="let bill">{{bill.paymentDeadline | date: "dd/MM/yyyy"}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="delete">
+            <th mat-header-cell *matHeaderCellDef>Delete</th>
+            <td mat-cell *matCellDef="let bill">
+                <button><i class="fa fa-trash fa-2x" (click)='delete(bill)'></i></button>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
+    </table>
+    -->
+ 
+
+   

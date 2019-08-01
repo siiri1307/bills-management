@@ -1,7 +1,7 @@
 import {Pipe, PipeTransform} from '@angular/core';
 
 @Pipe({
-    name:'toMonthName'
+    name: 'toMonthName'
 })
 
 export class IntegerToMonthNamePipe implements PipeTransform {
