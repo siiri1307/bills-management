@@ -10,8 +10,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { PDFService } from "../pdfs/pdf.service";
 import { saveAs } from 'file-saver';
-import { MatSort, MatSortable } from "@angular/material/sort";
-import { HttpErrorResponse } from "@angular/common/http";
+import { MatSort } from "@angular/material/sort";
 
 @Component({
     selector: 'app-bill-list',
@@ -29,12 +28,12 @@ import { HttpErrorResponse } from "@angular/common/http";
 export class BillListComponent implements OnInit, AfterViewInit {
 
     public billsData;
-    public billsDataCopy;
     columnsToDisplay = ['flat', 'total', 'sumToPay', 'monthToPayFor', 'paymentDeadline', 'delete'];
     expandedElement: Bill | null;
     _filterText: string;
-    errorMessage: string
-    show: boolean = false;
+    errorMessage: string;
+    noBillsToExportMessage: string;
+    
     public filteredBills: Array<Bill>;
 
     private matDataSource;
@@ -44,19 +43,18 @@ export class BillListComponent implements OnInit, AfterViewInit {
 
     @ViewChild(MatSort, {static: true}) sort: MatSort;
 
-    @ViewChild("alert", { static: false}) alert: ElementRef;
+    @ViewChild("duplicateBillsAlert", { static: false}) duplicateBillsAlert: ElementRef;
+
+    @ViewChild("noBillsAlert", {static: false}) noBillsAlert: ElementRef;
 
     constructor(private billService: BillService, private budgetService: BudgetService, private logger: LogService, private PDFService: PDFService, private renderer: Renderer2){
         this.billsData = new MatTableDataSource<Bill>();
-        this.billsDataCopy = new MatTableDataSource<Bill>();
         this.fetchBills();
     }
 
     fetchBills(): void {
         this.billService.get().subscribe((data: any) => {
-            //this.billsData = data;
-            this.billsData.data = data;
-            this.billsDataCopy = this.billsData;  
+            this.billsData.data = data; 
         });
     }
 
@@ -89,21 +87,6 @@ export class BillListComponent implements OnInit, AfterViewInit {
         return this.billsData.filter((bill: Bill) => bill.monthToPayFor.toLocaleLowerCase().indexOf(filterBy) !== -1);
     }
 
-    saveTotalPay(bill: Bill): void {
-
-        bill.sumToPay = 0;    
-
-        bill.status = 1;
-
-        let budgetEntry: BudgetEntry = {
-
-            sum: bill.total
-        };
-
-        //this.billService.update(bill).subscribe();
-        this.budgetService.add(budgetEntry).subscribe();
-    }
-
     updateBill(bill: Bill, comment: string): void {
 
         bill.sumToPay -= bill.partialPayAmount;
@@ -121,16 +104,14 @@ export class BillListComponent implements OnInit, AfterViewInit {
         };
 
         let log = this.logger.log("Paid " + bill.partialPayAmount + " EUR on " + new Date() + ".", comment);
-       
+        
         bill.logs.push(log);
-       
-        //this.logger.post(log).subscribe();
-
+        
         this.budgetService.add(budgetEntry).subscribe();
         
         bill.partialPayAmount = bill.sumToPay;
 
-        this.billService.update(bill).subscribe();      
+        this.billService.update(bill).subscribe();  
     }
 
     saveBudgetEntry(paidAmount: number): void {
@@ -143,18 +124,9 @@ export class BillListComponent implements OnInit, AfterViewInit {
         this.budgetService.add(entry).subscribe();
     }
 
-    
     filterBills(filterValue: any): void {
         //filtering of MatTableDataSource
         this.billsData.filter = filterValue;
-
-        /*
-        if(filterValue == "0"){
-            this.billsData = this.billsDataCopy;
-        }
-        else{
-            this.billsData = this.billsDataCopy.filter((bill) => bill.status == filterValue);
-        }*/
     }
 
     downloadLogs(): void {
@@ -168,10 +140,11 @@ export class BillListComponent implements OnInit, AfterViewInit {
     addBills(): void {
         this.billService.postBills().subscribe((data: any) => {
         this.billsData.data = data;
-        this.billsDataCopy = this.billsData},
-        err => this.errorMessage = err
-    ); 
-      this.renderer.addClass(this.alert.nativeElement, "show");
+        },
+        err => {
+            this.errorMessage = err; 
+            this.renderer.addClass(this.duplicateBillsAlert.nativeElement, "show");
+        });
     }
 
     delete(bill): void {
@@ -185,13 +158,18 @@ export class BillListComponent implements OnInit, AfterViewInit {
             var blob = new Blob([doc], {type: 'application/zip'});//inserts data to a blob. Blob is a file-like object of raw immutable data
             var fileName = 'test-bills.zip';
             saveAs(blob, fileName);
-        })
+        },
+        err => {
+            this.noBillsToExportMessage = err;
+            this.renderer.addClass(this.noBillsAlert.nativeElement, "show");
+        });
     }
 
-    hideAlert(){
-        //this.show = this.errorMessage = null;
-        //this.alert.nativeElement.style.visibility = "hidden";
-        this.renderer.removeClass(this.alert.nativeElement, "show");
-        //this.alert.nativeElement.querySelector("div").classList.remove("show");
+    hideAlertForDuplicateBills(){
+        this.renderer.removeClass(this.duplicateBillsAlert.nativeElement, "show");
+    }
+
+    hideAlertForNoBillsToExport(){
+        this.renderer.removeClass(this.noBillsAlert.nativeElement, "show");
     }
 }

@@ -20,6 +20,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import {MatSortModule} from '@angular/material';
 import { BillPartialPayComponent } from './bill-partial-pay/bill-partial-pay.component';
+import { CdkTableModule } from '@angular/cdk/table';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { BillPartialPayComponent } from './bill-partial-pay/bill-partial-pay.com
     AngularFontAwesomeModule,
     BrowserAnimationsModule,
     MatTableModule,
+    CdkTableModule,
     MatPaginatorModule,
     MatSidenavModule,
     MatSortModule,

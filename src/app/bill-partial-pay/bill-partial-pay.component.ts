@@ -11,14 +11,14 @@ import { FormsModule } from '@angular/forms';
 export class BillPartialPayComponent implements OnInit {
 
   @Input() bill: Bill;
-  @Output() submitPaidAmount = new EventEmitter<{bill: Bill, comment: string}>();
+  @Output() submittedAmount = new EventEmitter<{bill: Bill, comment: string}>();
 
   constructor() { }
 
   ngOnInit() {}
 
   submitForm(bill: Bill, comment: string){
-    this.submitPaidAmount.emit({bill, comment});
+    this.submittedAmount.emit({bill, comment});
   }
 
 }

@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { PDFService } from './pdf.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 
 
 describe('PDFService', () => {

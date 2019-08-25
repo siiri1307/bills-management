@@ -7,6 +7,7 @@ import { Adapter } from "../models/adapter";
 export class Bill {
 
     "id": number; 
+    "number": number;
     "total": number;
     "flat": number;
     "sumToPay": number;
@@ -16,8 +17,9 @@ export class Bill {
     "status": number;
     "logs": LogEntry[];
 
-    constructor(id: number, total: number, apartment: number, sumToPay: number, month: string, deadline: string, partialPay: number, status: number, logs: LogEntry[]){
+    constructor(id: number, number: number, total: number, apartment: number, sumToPay: number, month: string, deadline: string, partialPay: number, status: number, logs: LogEntry[]){
         this.id = id;
+        this.number = number;
         this.total = total; 
         this.flat = apartment;
         this.sumToPay = sumToPay;
@@ -39,6 +41,7 @@ export class BillAdapter implements Adapter<Bill> {
     fromJsonToModel(item: any): Bill {
         return new Bill(
             item.billId,
+            item.number,
             item.total,
             item.apartment,
             item.sumToPay,
@@ -54,6 +57,7 @@ export class BillAdapter implements Adapter<Bill> {
 
         var o: any = {
             "BillId": bill.id, 
+            "Number": bill.number,
             "Total": bill.total, 
             "Apartment": bill.flat, 
             "SumToPay": bill.sumToPay,
