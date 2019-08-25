@@ -14,8 +14,8 @@ import { MatSort } from "@angular/material/sort";
 
 @Component({
     selector: 'app-bill-list',
-    templateUrl: './bill-list.component2.html',
-    styleUrls: ['./bill-list.component.css', './bill-list.component2.css'],
+    templateUrl: './bill-list.component.html',
+    styleUrls: [ './bill-list.component.css'],
     animations: [
         trigger('detailExpand', [
           state('collapsed', style({height: '0px', minHeight: '0'})),
