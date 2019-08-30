@@ -32,11 +32,10 @@ export class BillListComponent implements OnInit, AfterViewInit {
     expandedElement: Bill | null;
     _filterText: string;
     errorMessage: string;
-    noBillsToExportMessage: string;
-    
-    public filteredBills: Array<Bill>;
 
-    private matDataSource;
+    noBillsToExportMessage: string;
+   
+    public filteredBills: Array<Bill>;
 
     //query the template to get references to template elements and inject them to a component
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
@@ -66,7 +65,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
         this._filterText = value;
     }
 
-    ngOnInit(): void { //ES2015 does not support interfaces. They are trans-piled out of a resulting JS.
+    ngOnInit(): void {
         console.log('Doing initialization.');
         this.billsData.filterPredicate = (bill: Bill, filter: number) => {
             if( filter == 0){
@@ -98,17 +97,12 @@ export class BillListComponent implements OnInit, AfterViewInit {
             bill.status = 1;
         }
 
-        let budgetEntry: BudgetEntry = {
-
-            sum: bill.partialPayAmount
-        };
-
         let log = this.logger.log("Paid " + bill.partialPayAmount + " EUR on " + new Date() + ".", comment);
         
         bill.logs.push(log);
         
-        this.budgetService.add(budgetEntry).subscribe();
-        
+        this.saveBudgetEntry(bill.partialPayAmount);
+    
         bill.partialPayAmount = bill.sumToPay;
 
         this.billService.update(bill).subscribe();  
@@ -125,7 +119,6 @@ export class BillListComponent implements OnInit, AfterViewInit {
     }
 
     filterBills(filterValue: any): void {
-        //filtering of MatTableDataSource
         this.billsData.filter = filterValue;
     }
 
@@ -155,7 +148,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
 
     downloadBillsForRunningMonthAsPDF() {
         this.PDFService.get().subscribe(doc => {
-            var blob = new Blob([doc], {type: 'application/zip'});//inserts data to a blob. Blob is a file-like object of raw immutable data
+            var blob = new Blob([doc], {type: 'application/zip'});
             var fileName = 'test-bills.zip';
             saveAs(blob, fileName);
         },
@@ -165,11 +158,16 @@ export class BillListComponent implements OnInit, AfterViewInit {
         });
     }
 
-    hideAlertForDuplicateBills(){
+    hideAlertForDuplicateBills() {
         this.renderer.removeClass(this.duplicateBillsAlert.nativeElement, "show");
     }
 
-    hideAlertForNoBillsToExport(){
+    hideAlertForNoBillsToExport() {
         this.renderer.removeClass(this.noBillsAlert.nativeElement, "show");
+    }
+
+    trackById(index: number, bill: Bill) {
+        console.log("Track by: " + bill.id);
+        return bill.id;
     }
 }

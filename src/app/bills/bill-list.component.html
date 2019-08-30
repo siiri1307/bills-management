@@ -3,7 +3,7 @@
         <div class="buttons-group">
             <button class='btn btn-info btn-sm' (click)='downloadLogs()'><i class="fas fa-download fa-fw"></i>Download logs</button>
             <button class='btn btn-success btn-sm' data-toggle="tooltip" data-placement="bottom" title="Add bills for the running month" (click)='addBills()'><i class="fas fa-plus fa-fw"></i>Add bills</button>
-            <button class='btn btn-info btn-sm' data-toggle="tooltip" data-placement="bottom" title="Download bills for the running month as a zip of PDFs" (click)='downloadBillsForRunningMonthAsPDF()'><i class="fas fa-file-pdf fa-fw"></i>Export bills</button>
+            <button class='download-bills btn btn-info btn-sm' data-toggle="tooltip" data-placement="bottom" title="Download bills for the running month as a zip of PDFs" (click)='downloadBillsForRunningMonthAsPDF()'><i class="fas fa-file-pdf fa-fw"></i>Export bills</button>
         </div>
     </div>
 
@@ -21,7 +21,7 @@
 
 
     <div class="bills-view-container">
-        <table mat-table class="mat-elevation-z8" [dataSource]="billsData" multiTemplateDataRows matSort matSortDirection="desc" matSortActive="monthToPayFor">
+        <table mat-table class="mat-elevation-z8" [dataSource]="billsData" [trackBy]="trackById" multiTemplateDataRows matSort matSortDirection="desc" matSortActive="monthToPayFor">
 
             <ng-container matColumnDef="flat">
                 <th mat-header-cell *matHeaderCellDef>Apartment no</th>
@@ -89,7 +89,7 @@
             </button>
         </div>
 
-        <div #noBillsAlert *ngIf="noBillsToExportMessage !== undefined" class="alert alert-warning fade show" role="alert">
+        <div #noBillsAlert *ngIf="noBillsToExportMessage !== undefined" class="noBills alert alert-warning fade show" role="alert">
             {{noBillsToExportMessage}}
             <button type="button" class="close" (click)="hideAlertForNoBillsToExport()">
                 <span aria-hidden="true">&times;</span>

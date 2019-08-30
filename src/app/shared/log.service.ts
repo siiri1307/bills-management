@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { LogEntry } from './log-entry';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -8,20 +7,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
 
 export class LogService {
 
-  private headers: HttpHeaders;
-  private accessPointUrl: string = 'http://localhost:50022/api/LogEntries';
-  
-  logWithDate: boolean = true;
-
-  constructor(private http: HttpClient) { 
-    this.headers = new HttpHeaders({'Content-Type': 'application/json; charset=utf-8'});
-  }
-
-  public post(payload){
-    
-    return this.http.post(this.accessPointUrl, payload, {headers: this.headers});
-
-   }
+  constructor() {}
 
   log(message: string, comment: string): LogEntry {
 
