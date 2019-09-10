@@ -11,7 +11,7 @@ export class LogService {
 
   log(message: string, comment: string): LogEntry {
 
-    let entry: LogEntry = new LogEntry();
+    const entry: LogEntry = new LogEntry();
     entry.message = message;
     entry.comment = comment;
     entry.date = new Date();

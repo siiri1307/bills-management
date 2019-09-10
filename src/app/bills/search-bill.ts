@@ -8,7 +8,7 @@ import { Bill } from './bill';
 @Injectable()
 export class SearchBillsByMonthPipe implements PipeTransform {
     transform(bills: Bill[], filter: string): any[] {
-        if (!filter || filter.length == 0) {
+        if (!filter || filter.length === 0) {
             return bills;
         }
         

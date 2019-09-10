@@ -17,7 +17,7 @@ export class BillPartialPayComponent implements OnInit {
 
   ngOnInit() {}
 
-  submitForm(bill: Bill, comment: string){
+  submitForm(bill: Bill, comment: string) {
     this.submittedAmount.emit({bill, comment});
   }
 

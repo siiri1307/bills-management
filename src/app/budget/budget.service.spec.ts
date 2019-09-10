@@ -31,6 +31,6 @@ describe('BudgetService testing', () => {
 
       req.flush(testBudget);
 
-      httpTestingController.verify()
+      httpTestingController.verify();
   });
 });

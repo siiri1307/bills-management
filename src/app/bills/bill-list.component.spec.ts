@@ -44,23 +44,23 @@ describe('BillListComponent', () => {
 
   it('clicking "Download bills for running month" should show the alert message', () => {
 
-    component.noBillsToExportMessage = "There are no bills to export.";
+    component["noBillsToExportMessage"] = "There are no bills to export.";
     
     fixture.debugElement.nativeElement.querySelector('.download-bills').click();
-    fixture.detectChanges(); //trigger a change detection
+    fixture.detectChanges(); // trigger a change detection
    
     expect(component.noBillsAlert).toBeDefined();
     expect(component.noBillsAlert.nativeElement.textContent).toContain("There are no bills to export.");
-  })
+  });
 
   it('"No bills to download" alert message should not be initially shown', () => {
 
     expect(component.noBillsAlert).toBeUndefined();
-  })
+  });
 
   it('"No bills to download" alert message is closed when x is clicked', () => {
 
-    component.noBillsToExportMessage = "There are no bills to export.";
+    component["noBillsToExportMessage"] = "There are no bills to export.";
     fixture.debugElement.nativeElement.querySelector('.download-bills').click();
     fixture.detectChanges();
     expect(document.getElementsByClassName('show').length).toBe(1);
@@ -69,5 +69,5 @@ describe('BillListComponent', () => {
     fixture.detectChanges();
     expect(document.getElementsByClassName('show').length).toBe(0);
    
-  })
-})
+  });
+});

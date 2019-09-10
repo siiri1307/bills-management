@@ -7,13 +7,11 @@ import { Component } from "@angular/core";
     templateUrl: './budget.component.html'
 })
 
-export class BudgetComponent{
+export class BudgetComponent {
 
-    public budgetTotal;
-
-    public budgetWithID1; 
-
-    constructor(private budgetService: BudgetService){
+    private budgetTotal;
+    
+    constructor(private budgetService: BudgetService) {
         this.budgetService.getTotal().subscribe((data: any) => this.budgetTotal = data);
     }
 

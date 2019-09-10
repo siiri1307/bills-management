@@ -17,7 +17,7 @@ describe('BillPartialPayComponent', () => {
     fixture = TestBed.createComponent(BillPartialPayComponent);
     component = fixture.componentInstance;
     
-    //fixture.detectChanges();
+    // fixture.detectChanges();
   });
 
   it('should propagate bill to template', () => {
@@ -26,27 +26,27 @@ describe('BillPartialPayComponent', () => {
     partialPayAmount: 0, status: 3, logs: new Array<LogEntry>()};
 
     component.bill = testBill;
-    fixture.detectChanges(); //trigger initial data binding
+    fixture.detectChanges(); // trigger initial data binding
 
-    let billDe = fixture.debugElement.query(By.css('.partial-pay'));
+    const billDe = fixture.debugElement.query(By.css('.partial-pay'));
    
     expect(billDe.context.bill).toBe(testBill);
   });
 
-  it('should disable the field for inputting paid amount and comment when fully paid',async(() => {
+  it('should disable the field for inputting paid amount and comment when fully paid', async(() => {
     
-    //mock bill supplied by the parent component
+    // mock bill supplied by the parent component
     const testBill: Bill = {id: 1, number: 2, total: 110, flat: 1, sumToPay: 110, monthToPayFor: 'July', paymentDeadline: '10.08.2019', 
     partialPayAmount: 0, status: 1, logs: new Array<LogEntry>()};
     
     component.bill = testBill;
 
-    //trigger initial data binding
+    // trigger initial data binding
     fixture.detectChanges();
 
     fixture.whenStable().then(() => {
-      let paidAmountDE = fixture.debugElement.query(By.css('#paidAmount'));
-      let commentDE = fixture.debugElement.query(By.css('#comment'));
+      const paidAmountDE = fixture.debugElement.query(By.css('#paidAmount'));
+      const commentDE = fixture.debugElement.query(By.css('#comment'));
       alert(paidAmountDE.nativeElement.disabled);
   
       expect(paidAmountDE.nativeElement.disabled).toBe(true);
@@ -69,8 +69,8 @@ describe('BillPartialPayComponent', () => {
 
     component.submittedAmount.subscribe((bill: Bill) => submittedBill = bill);
     
-    let billDe = fixture.debugElement.query(By.css('form'));
-    
+    const billDe = fixture.debugElement.query(By.css('form'));
+
     billDe.triggerEventHandler('submit', null);
 
     fixture.detectChanges();
@@ -78,8 +78,8 @@ describe('BillPartialPayComponent', () => {
     expect(submittedBill.bill.id).toEqual(testBill.id);
     expect(submittedBill.bill.total).toEqual(testBill.total);
     expect(submittedBill.bill.flat).toEqual(testBill.flat);
-    //expect(submittedBill.total).toEqual(110);
-
+    // expect(submittedBill.total).toEqual(110);
+  
   });
 
 });

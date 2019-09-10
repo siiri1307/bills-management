@@ -8,10 +8,10 @@ import { Title } from '@angular/platform-browser';
 })
 export class AppComponent {
 
-  public constructor(private titleService: Title){
+  private pageTitle = 'korteriühistu veeb';
+
+  public constructor(private titleService: Title) {
     this.titleService.setTitle("Korteriühistu Veeb");
   }
-
-  pageTitle: string = 'korteriühistu veeb';
 
 }

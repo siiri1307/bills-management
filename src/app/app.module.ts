@@ -11,7 +11,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { SearchBillsByMonthPipe } from './bills/search-bill';
 import { BudgetComponent } from './budget/budget.component';
 import { BudgetService } from './budget/budget.service';
-import { CustomFormsModule } from 'ng2-validation'
+import { CustomFormsModule } from 'ng2-validation';
 import { IntegerToMonthNamePipe } from './bills/month-name.pipe';
 import { AngularFontAwesomeModule } from 'angular-font-awesome';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';

@@ -20,7 +20,7 @@ describe('PDFService', () => {
 
   it('should be able to retrieve zip archive from API via get', () => {
 
-    var debug = {hello: "world"};
+    const debug = {hello: "world"};
 
     const dummyBlob = new Blob([JSON.stringify(debug, null, 2)], {type : 'application/zip'});
 
@@ -28,9 +28,9 @@ describe('PDFService', () => {
       expect(files).toEqual(dummyBlob);
     });
 
-    const req = httpMock.expectOne(`${service.pdfUrl}`); //mock request
+    const req = httpMock.expectOne(`${service["pdfUrl"]}`); // mock request
     expect(req.request.method).toBe("GET");
-    req.flush(dummyBlob); //provide dummy values as a response
-  })
+    req.flush(dummyBlob); // provide dummy values as a response
+  });
 
 });

@@ -5,11 +5,12 @@ import {Pipe, PipeTransform} from '@angular/core';
 })
 
 export class IntegerToMonthNamePipe implements PipeTransform {
+    
     transform(monthAsNumber: number): string {
 
-        var monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'];
 
-        return monthNames[monthAsNumber-1];
+        return monthNames[monthAsNumber - 1];
     }
 }

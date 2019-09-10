@@ -10,8 +10,9 @@
         "component-selector": [
             true,
             "element",
-            "app",
+            "crapp",
             "kebab-case"
         ]
     }
+
 }

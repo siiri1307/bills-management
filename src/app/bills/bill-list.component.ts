@@ -1,5 +1,5 @@
-//Component class handles data and user interactions programmatically. 
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Renderer2 } from "@angular/core"; //a life-cycle hook
+// Component class handles data and user interactions programmatically. 
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, Renderer2 } from "@angular/core"; // a life-cycle hook
 import { Bill } from "./bill";
 import { BillService } from "./bill.service";
 import { BudgetService } from "../budget/budget.service";
@@ -27,17 +27,17 @@ import { MatSort } from "@angular/material/sort";
 
 export class BillListComponent implements OnInit, AfterViewInit {
 
-    public billsData;
-    columnsToDisplay = ['flat', 'total', 'sumToPay', 'monthToPayFor', 'paymentDeadline', 'delete'];
-    expandedElement: Bill | null;
+    private billsData;
+    private columnsToDisplay = ['flat', 'total', 'sumToPay', 'monthToPayFor', 'paymentDeadline', 'delete'];
+    private expandedElement: Bill | null;
     _filterText: string;
-    errorMessage: string;
+    private errorMessage: string;
 
-    noBillsToExportMessage: string;
+    private noBillsToExportMessage: string;
    
-    public filteredBills: Array<Bill>;
+    private filteredBills: Array<Bill>;
 
-    //query the template to get references to template elements and inject them to a component
+    // query the template to get references to template elements and inject them to a component
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -46,7 +46,8 @@ export class BillListComponent implements OnInit, AfterViewInit {
 
     @ViewChild("noBillsAlert", {static: false}) noBillsAlert: ElementRef;
 
-    constructor(private billService: BillService, private budgetService: BudgetService, private logger: LogService, private PDFService: PDFService, private renderer: Renderer2){
+    constructor(private billService: BillService, private budgetService: BudgetService, private logger: LogService, 
+        private pdfService: PDFService, private renderer: Renderer2) {
         this.billsData = new MatTableDataSource<Bill>();
         this.fetchBills();
     }
@@ -68,10 +69,10 @@ export class BillListComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         console.log('Doing initialization.');
         this.billsData.filterPredicate = (bill: Bill, filter: number) => {
-            if( filter == 0){
+            if(filter === 0) {
                 return true;
             }
-            return bill.status == filter;
+            return bill.status === filter;
            };
       
         this.billsData.sort = this.sort;
@@ -92,12 +93,12 @@ export class BillListComponent implements OnInit, AfterViewInit {
 
         bill.status = 2;
 
-        if(bill.sumToPay == 0){
+        if(bill.sumToPay === 0) {
 
             bill.status = 1;
         }
 
-        let log = this.logger.log("Paid " + bill.partialPayAmount + " EUR on " + new Date() + ".", comment);
+        const log = this.logger.log("Paid " + bill.partialPayAmount + " EUR on " + new Date() + ".", comment);
         
         bill.logs.push(log);
         
@@ -110,7 +111,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
 
     saveBudgetEntry(paidAmount: number): void {
 
-        var entry: BudgetEntry = {
+        const entry: BudgetEntry = {
         
             sum: paidAmount
         };
@@ -124,15 +125,15 @@ export class BillListComponent implements OnInit, AfterViewInit {
 
     downloadLogs(): void {
         this.billService.downloadLogs().subscribe(csvfile => {
-            var blob = new Blob([csvfile], {type: 'text/csv'});
-            var fileName = 'bills.csv';
+            const blob = new Blob([csvfile], {type: 'text/csv'});
+            const fileName = 'bills.csv';
             saveAs(blob, fileName);
-        })
+        });
     }
 
     addBills(): void {
         this.billService.postBills().subscribe((data: any) => {
-        this.billsData.data = data;
+            this.billsData.data = data;
         },
         err => {
             this.errorMessage = err; 
@@ -147,9 +148,9 @@ export class BillListComponent implements OnInit, AfterViewInit {
     }
 
     downloadBillsForRunningMonthAsPDF() {
-        this.PDFService.get().subscribe(doc => {
-            var blob = new Blob([doc], {type: 'application/zip'});
-            var fileName = 'test-bills.zip';
+        this.pdfService.get().subscribe(doc => {
+            const blob = new Blob([doc], {type: 'application/zip'});
+            const fileName = 'test-bills.zip';
             saveAs(blob, fileName);
         },
         err => {
@@ -158,15 +159,15 @@ export class BillListComponent implements OnInit, AfterViewInit {
         });
     }
 
-    hideAlertForDuplicateBills() {
+    private hideAlertForDuplicateBills() {
         this.renderer.removeClass(this.duplicateBillsAlert.nativeElement, "show");
     }
 
-    hideAlertForNoBillsToExport() {
+    private hideAlertForNoBillsToExport() {
         this.renderer.removeClass(this.noBillsAlert.nativeElement, "show");
     }
 
-    trackById(index: number, bill: Bill) {
+    private trackById(index: number, bill: Bill) {
         console.log("Track by: " + bill.id);
         return bill.id;
     }

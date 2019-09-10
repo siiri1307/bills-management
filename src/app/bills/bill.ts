@@ -17,7 +17,8 @@ export class Bill {
     "status": number;
     "logs": LogEntry[];
 
-    constructor(id: number, number: number, total: number, apartment: number, sumToPay: number, month: string, deadline: string, partialPay: number, status: number, logs: LogEntry[]){
+    constructor(id: number, number: number, total: number, apartment: number, sumToPay: number, month: string, 
+        deadline: string, partialPay: number, status: number, logs: LogEntry[]) {
         this.id = id;
         this.number = number;
         this.total = total; 
@@ -35,7 +36,7 @@ export class Bill {
     providedIn: 'root'
 })
 
-//Model-Adapter pattern: adapter is an interface to ingest the API's data and build instances of the model
+// Model-Adapter pattern: adapter is an interface to ingest the API's data and build instances of the model
 export class BillAdapter implements Adapter<Bill> {
 
     fromJsonToModel(item: any): Bill {
@@ -50,13 +51,13 @@ export class BillAdapter implements Adapter<Bill> {
             item.partialPayAmount = item.sumToPay,
             item.status, 
             item.logs
-        )
+        );
     }
 
     fromModelToJson(bill: Bill): JSON {
 
-        var o: any = {
-            "BillId": bill.id, 
+        const o: any = {
+            "BillId": bill.id,
             "Number": bill.number,
             "Total": bill.total, 
             "Apartment": bill.flat, 
@@ -65,8 +66,8 @@ export class BillAdapter implements Adapter<Bill> {
             "PaymentDeadline": bill.paymentDeadline,
             "Status": bill.status, 
             "Logs": bill.logs
-        }
+        };
         
-        return <JSON>o
+        return <JSON>o;
     }
 }

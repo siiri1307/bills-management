@@ -9,21 +9,21 @@ import { catchError } from 'rxjs/operators';
 
 export class PDFService {
 
-  readonly pdfUrl: string = 'http://localhost:50022/api/PDFs';
-  
-  constructor(private http: HttpClient) { 
-  }
+  private readonly pdfUrl: string = 'http://localhost:50022/api/PDFs';
 
-  public get(){
+  constructor(private http: HttpClient) {}
+
+  public get() {
     return this.http.get(this.pdfUrl, { responseType: "blob" }).pipe(catchError(this.handleError));
 
    }
 
    private handleError(error: HttpErrorResponse) {
-    if(error.status == 404){
+    if(error.status === 404) {
       console.error("No bills to export.");
     }
-    return throwError("There are no bills to export for this month. Please make sure you have added the bills before trying to export them.");
+    return throwError("There are no bills to export for this month." +  
+      "Please make sure you have added the bills before trying to export them.");
   }
 
 }
