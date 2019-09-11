@@ -9,7 +9,7 @@ import { Component } from "@angular/core";
 
 export class BudgetComponent {
 
-    private budgetTotal;
+    budgetTotal;
     
     constructor(private budgetService: BudgetService) {
         this.budgetService.getTotal().subscribe((data: any) => this.budgetTotal = data);

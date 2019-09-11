@@ -27,13 +27,13 @@ import { MatSort } from "@angular/material/sort";
 
 export class BillListComponent implements OnInit, AfterViewInit {
 
-    private billsData;
-    private columnsToDisplay = ['flat', 'total', 'sumToPay', 'monthToPayFor', 'paymentDeadline', 'delete'];
-    private expandedElement: Bill | null;
+    billsData;
+    columnsToDisplay = ['flat', 'total', 'sumToPay', 'monthToPayFor', 'paymentDeadline', 'delete'];
+    expandedElement: Bill | null;
     _filterText: string;
-    private errorMessage: string;
+    errorMessage: string;
 
-    private noBillsToExportMessage: string;
+    noBillsToExportMessage: string;
    
     private filteredBills: Array<Bill>;
 
@@ -159,15 +159,15 @@ export class BillListComponent implements OnInit, AfterViewInit {
         });
     }
 
-    private hideAlertForDuplicateBills() {
+    hideAlertForDuplicateBills() {
         this.renderer.removeClass(this.duplicateBillsAlert.nativeElement, "show");
     }
 
-    private hideAlertForNoBillsToExport() {
+    hideAlertForNoBillsToExport() {
         this.renderer.removeClass(this.noBillsAlert.nativeElement, "show");
     }
 
-    private trackById(index: number, bill: Bill) {
+    trackById(index: number, bill: Bill) {
         console.log("Track by: " + bill.id);
         return bill.id;
     }
