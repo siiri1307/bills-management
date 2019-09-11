@@ -8,7 +8,7 @@ import { Title } from '@angular/platform-browser';
 })
 export class AppComponent {
 
-  private pageTitle = 'korteriühistu veeb';
+  pageTitle = 'korteriühistu veeb';
 
   public constructor(private titleService: Title) {
     this.titleService.setTitle("Korteriühistu Veeb");
