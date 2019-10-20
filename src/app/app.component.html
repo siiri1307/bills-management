@@ -1,18 +1,2 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <nav class='navbar navbar-expand navbar-light bg-light'>
-      <ul class='nav nav-pills'>
-        <li><a class='nav-link' [routerLink]="['/home']">Home</a></li>
-        <li><a class='nav-link' [routerLink]="['/bills']">Bills</a></li>
-        <li><a class='nav-link' [routerLink]="['/budget']">Budget</a></li>
-      </ul>
-    </nav>
-    <h1>
-      Tere tulemast meie {{pageTitle}}i!
-    </h1>
-  <router-outlet></router-outlet>
-</div>
-<!--<bill-list></bill-list>-->
-
-
-
+<app-header></app-header>
+<router-outlet></router-outlet>

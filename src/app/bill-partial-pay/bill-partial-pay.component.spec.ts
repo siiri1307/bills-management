@@ -57,7 +57,6 @@ describe('BillPartialPayComponent', () => {
 
   it('should raise selected event when clicked (triggerEventHandler)', () => {
     
-
     const testBill: Bill = {id: 1, number: 2, total: 110, flat: 1, sumToPay: 110, monthToPayFor: 'July', paymentDeadline: '10.08.2019', 
     partialPayAmount: 0, status: 1, logs: new Array<LogEntry>()};
     

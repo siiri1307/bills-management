@@ -18,9 +18,16 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import {MatSortModule} from '@angular/material';
+import { MatSortModule } from '@angular/material';
 import { BillPartialPayComponent } from './bill-partial-pay/bill-partial-pay.component';
 import { CdkTableModule } from '@angular/cdk/table';
+import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider } from 'angularx-social-login';
+import { getAuthServiceConfigs } from '../socialLoginConfig';
+import { GoogleAuthService } from './google-auth/google-auth.service';
+import { LogInPageComponent } from './log-in-page/log-in-page.component';
+import { RouteActivationGuard } from './route-activation-guard';
+import { HeaderComponent } from './header/header.component';
+
 
 @NgModule({
   declarations: [
@@ -30,7 +37,9 @@ import { CdkTableModule } from '@angular/cdk/table';
     BudgetComponent,
     SearchBillsByMonthPipe,
     IntegerToMonthNamePipe,
-    BillPartialPayComponent
+    BillPartialPayComponent,
+    LogInPageComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
@@ -45,16 +54,23 @@ import { CdkTableModule } from '@angular/cdk/table';
     MatPaginatorModule,
     MatSidenavModule,
     MatSortModule,
+    SocialLoginModule,
     RouterModule.forRoot([
-      {path: 'bills', component: BillListComponent},
-      {path: 'home', component: HomeComponent},
-      {path: '', component: HomeComponent},
-      {path: 'budget', component: BudgetComponent},
+      {path: 'bills', component: BillListComponent, canActivate: [RouteActivationGuard]},
+      {path: 'home', component: HomeComponent, canActivate: [RouteActivationGuard]},
+      {path: 'budget', component: BudgetComponent, canActivate: [RouteActivationGuard]},
+      {path: '', component: LogInPageComponent}
     ])
   ],
   providers: [
     BillService,
-    BudgetService
+    BudgetService,
+    GoogleAuthService,
+    RouteActivationGuard,
+    {
+      provide: AuthServiceConfig,
+      useFactory: getAuthServiceConfigs
+    }
   ],
   bootstrap: [AppComponent]
 })

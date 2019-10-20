@@ -15,7 +15,7 @@ import { MatSort } from "@angular/material/sort";
 @Component({
     selector: 'app-bill-list',
     templateUrl: './bill-list.component.html',
-    styleUrls: [ './bill-list.component.css'],
+    styleUrls: ['./bill-list.component.css'],
     animations: [
         trigger('detailExpand', [
           state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -35,8 +35,6 @@ export class BillListComponent implements OnInit, AfterViewInit {
 
     noBillsToExportMessage: string;
    
-    private filteredBills: Array<Bill>;
-
     // query the template to get references to template elements and inject them to a component
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
@@ -58,21 +56,14 @@ export class BillListComponent implements OnInit, AfterViewInit {
         });
     }
 
-    get filterText(): string {
-        return this._filterText;
-    }
-
-    set filterText(value: string) {
-        this._filterText = value;
-    }
-
     ngOnInit(): void {
         console.log('Doing initialization.');
         this.billsData.filterPredicate = (bill: Bill, filter: number) => {
-            if(filter === 0) {
+            var filterAsNumber = +filter;
+            if(filterAsNumber === 0) {
                 return true;
             }
-            return bill.status === filter;
+            return bill.status === filterAsNumber;
            };
       
         this.billsData.sort = this.sort;
@@ -80,11 +71,6 @@ export class BillListComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.billsData.paginator = this.paginator;
-    }
-
-    doFiltering(filterBy: string): Bill[] {
-        filterBy = filterBy.toLowerCase();
-        return this.billsData.filter((bill: Bill) => bill.monthToPayFor.toLocaleLowerCase().indexOf(filterBy) !== -1);
     }
 
     updateBill(bill: Bill, comment: string): void {
@@ -119,7 +105,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
         this.budgetService.add(entry).subscribe();
     }
 
-    filterBills(filterValue: any): void {
+    filterBills(filterValue: number): void {
         this.billsData.filter = filterValue;
     }
 
@@ -170,5 +156,9 @@ export class BillListComponent implements OnInit, AfterViewInit {
     trackById(index: number, bill: Bill) {
         console.log("Track by: " + bill.id);
         return bill.id;
+    }
+
+    sendMails() {
+        //this.mailerService.postAccessToken();
     }
 }

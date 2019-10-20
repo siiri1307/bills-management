@@ -1,0 +1,15 @@
+<div *ngIf="isLoggedIn$ | async" style="text-align:center">
+    <nav class='navbar navbar-expand navbar-light bg-light'>
+        <ul class='nav nav-pills'>
+          <li><a class='nav-link' [routerLink]="['/home']">Home</a></li>
+          <li><a class='nav-link' [routerLink]="['/bills']">Bills</a></li>
+          <li><a class='nav-link' [routerLink]="['/budget']">Budget</a></li>
+        </ul>
+        <button (click)= "logOut()" *ngIf="isLoggedIn$ | async">Log out</button>
+        <div>You are logged in as {{user$ | async}}</div>
+      </nav>
+      <h1>
+        Welcome to our apartment association website!
+      </h1>
+</div>
+  

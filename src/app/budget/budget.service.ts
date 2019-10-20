@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BudgetEntry } from './budget-entry';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -8,8 +9,10 @@ import { BudgetEntry } from './budget-entry';
 
 export class BudgetService {
 
+  baseUrl = environment.baseUrl;
   private headers: HttpHeaders;
-  private accessPointUrl = 'http://localhost:50022/api/budgets';
+  private accessPointUrl = this.baseUrl + '/budgets';
+  //private accessPointUrl = 'http://localhost:50022/api/budgets';
 
   constructor(private http: HttpClient) { 
     this.headers = new HttpHeaders({'Content-Type': 'application/json'});

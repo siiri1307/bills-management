@@ -4,6 +4,7 @@ import { LogEntry } from '../shared/log-entry';
 import { Bill, BillAdapter } from './bill';
 import { Observable, throwError } from 'rxjs';
 import { map, catchError, retry } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,9 @@ import { map, catchError, retry } from 'rxjs/operators';
 
 export class BillService {
    
+  baseUrl = environment.baseUrl;
   private headers: HttpHeaders;
-  private accessPointUrl = 'http://localhost:50022/api/bills';
+  private accessPointUrl = this.baseUrl + '/bills';
 
   constructor(private http: HttpClient, private adapter: BillAdapter) {
 
@@ -25,7 +27,7 @@ export class BillService {
     return this.http.get(this.accessPointUrl, {headers: this.headers}).pipe(
       retry(2),
       map((data: any[]) => data.map((item: any) => this.adapter.fromJsonToModel(item))));
-      
+
    }
 
    public getBillById(id) {
