@@ -11,6 +11,7 @@ import { MatTableDataSource } from "@angular/material/table";
 import { PDFService } from "../pdfs/pdf.service";
 import { saveAs } from 'file-saver';
 import { MatSort } from "@angular/material/sort";
+import { GoogleAuthService } from "../google-auth/google-auth.service";
 
 @Component({
     selector: 'app-bill-list',
@@ -31,22 +32,26 @@ export class BillListComponent implements OnInit, AfterViewInit {
     columnsToDisplay = ['flat', 'total', 'sumToPay', 'monthToPayFor', 'paymentDeadline', 'delete'];
     expandedElement: Bill | null;
     _filterText: string;
-    errorMessage: string;
 
-    noBillsToExportMessage: string;
+    alert: string;
    
     // query the template to get references to template elements and inject them to a component
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
     @ViewChild(MatSort, {static: true}) sort: MatSort;
 
-    @ViewChild("duplicateBillsAlert", { static: false}) duplicateBillsAlert: ElementRef;
+    @ViewChild("alertRef", { static: false}) alertRef: ElementRef;
 
-    @ViewChild("noBillsAlert", {static: false}) noBillsAlert: ElementRef;
+    @ViewChild("duplicateBillsAlert", { static: false}) duplicateBillsAlert: ElementRef; //ElementRef wraps the native DOM element
+
+    @ViewChild("noBillsAlert", {static: false}) noBillsAlert: ElementRef; 
+
+    @ViewChild("mailAlert", {static: false}) mailAlert: ElementRef;
 
     constructor(private billService: BillService, private budgetService: BudgetService, private logger: LogService, 
-        private pdfService: PDFService, private renderer: Renderer2) {
+        private pdfService: PDFService, private renderer: Renderer2, private googleAuthService: GoogleAuthService) {
         this.billsData = new MatTableDataSource<Bill>();
+        debugger
         this.fetchBills();
     }
 
@@ -122,8 +127,8 @@ export class BillListComponent implements OnInit, AfterViewInit {
             this.billsData.data = data;
         },
         err => {
-            this.errorMessage = err; 
-            this.renderer.addClass(this.duplicateBillsAlert.nativeElement, "show");
+            this.alert = err;
+            this.renderer.addClass(this.alertRef.nativeElement, "show");
         });
     }
 
@@ -140,8 +145,8 @@ export class BillListComponent implements OnInit, AfterViewInit {
             saveAs(blob, fileName);
         },
         err => {
-            this.noBillsToExportMessage = err;
-            this.renderer.addClass(this.noBillsAlert.nativeElement, "show");
+            this.alert = err;
+            this.renderer.addClass(this.alertRef.nativeElement, "show");
         });
     }
 
@@ -153,12 +158,30 @@ export class BillListComponent implements OnInit, AfterViewInit {
         this.renderer.removeClass(this.noBillsAlert.nativeElement, "show");
     }
 
+    hideMailAlert() {
+        this.renderer.removeClass(this.mailAlert.nativeElement, "show");
+    }
+
+    hideAlert() {
+        this.renderer.removeClass(this.alertRef.nativeElement, "show");
+    }
+
     trackById(index: number, bill: Bill) {
         console.log("Track by: " + bill.id);
         return bill.id;
     }
 
     sendMails() {
-        //this.mailerService.postAccessToken();
+        //this part needs refactoring
+        this.pdfService.post().subscribe( response => {
+            //using nativeElement property to apply a DOM operation to div tag
+            this.alert = "Your email has been successfully sent.";
+            this.renderer.addClass(this.alertRef.nativeElement, "show");
+        }, 
+        err => {
+            this.alert = err;
+            this.renderer.addClass(this.alertRef.nativeElement, "show");
+        });
+        //this.googleAuthService.sendEmails().subscribe();
     }
 }

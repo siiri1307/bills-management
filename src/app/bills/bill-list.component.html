@@ -83,19 +83,13 @@
             [pageSizeOptions]="[3,6]">
         </mat-paginator>
 
-        <div #duplicateBillsAlert *ngIf="errorMessage !== undefined" class="alert alert-warning fade show" role="alert">
-            {{errorMessage}}
-            <button type="button" class="close" (click)="hideAlertForDuplicateBills()">
+        <div #alertRef *ngIf="alert !== undefined" class="alert alert-warning fade show" role="alert">
+            {{alert}}
+            <button type="button" class="close" (click)="hideAlert()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-
-        <div #noBillsAlert *ngIf="noBillsToExportMessage !== undefined" class="alert alert-warning fade show" role="alert">
-            {{noBillsToExportMessage}}
-            <button type="button" class="close" (click)="hideAlertForNoBillsToExport()">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
+      
     </div>
 
 </body>  

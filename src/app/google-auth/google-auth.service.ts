@@ -14,6 +14,9 @@ export class GoogleAuthService {
 
   private userName = new BehaviorSubject<string>(null);
 
+  private userEmail: string;
+  private temp_token; 
+
   public accessToken = new BehaviorSubject<string>(null);
 
   private loggedIn = new BehaviorSubject<boolean>(false); // requires an initial value and emits its current value to subscribers
@@ -35,9 +38,13 @@ export class GoogleAuthService {
       
       this.postToken(JSON.stringify(user.idToken)).subscribe(x => {
         //token successfully validated
+        this.temp_token = user.idToken;
         this.userName.next(user.firstName);
+        this.userEmail = user.email;
         console.log("Id token after sign-in: " + user.idToken);
         this.accessToken.next(user.idToken);
+        console.log("User ID:")
+        console.log(user.name);
         this.loggedIn.next(true);
         this.router.navigateByUrl('/home'); 
       },
@@ -73,13 +80,22 @@ export class GoogleAuthService {
   getUserName() {
     return this.userName.asObservable();
   }
+
+  getUserEmail() {
+    //return this.userEmail.asObservable();
+  }
   
   postToken(idToken: string) {
     
     console.log("Received access token: " + idToken);
     console.log("Posting to backend ..");
 
-    return this.http.post(this.serviceUrl, idToken, {headers: this.headers});
+    return this.http.post(this.serviceUrl + "/validate", idToken, {headers: this.headers});
+  }
+
+  sendEmails() {  
+    //var userEmail = this.userEmail.asObservable();
+    return this.http.post(this.serviceUrl + "/send", JSON.stringify(this.temp_token), {headers: this.headers});
   }
 
 }
