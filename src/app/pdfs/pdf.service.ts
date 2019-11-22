@@ -3,6 +3,8 @@ import { HttpHeaders, HttpClient, HttpErrorResponse } from '@angular/common/http
 import { throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { Bill, BillAdapter } from '../bills/bill';
+import { Adapter } from '../models/adapter';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,7 @@ export class PDFService {
   
   private headers: HttpHeaders;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private adapter: BillAdapter) {
     //this.headers = new HttpHeaders({'Content-Type': 'application/json'});
   }
 
@@ -24,9 +26,23 @@ export class PDFService {
     return this.http.get(this.pdfUrl, { responseType: "blob" }).pipe(catchError(this.handleError));
   }
 
+  private mapBillsFromModelToJson(bills: Array<Bill>) {
+    var mappedBills = bills.map((b: Bill) => this.adapter.fromModelToJson(b));
+
+    return mappedBills;
+  }
+
+  public getBillsZip(bills: Array<Bill>) {
+    //var mappedBills = bills.map((b: Bill) => this.adapter.fromModelToJson(b));
+
+    return this.http.post(this.pdfUrl + "/getZip", {billsList: this.mapBillsFromModelToJson(bills)}, { responseType: "blob" }).pipe(catchError(this.handleError));
+  }
+
   //to be DELETED
-  public post(){
-    return this.http.post(this.pdfUrl, {}).pipe(
+  public sendBillsWithEmail(bills: Array<Bill>){
+    //var mappedBills = bills.map((b: Bill) => this.adapter.fromModelToJson(b));
+
+    return this.http.post(this.pdfUrl, {billsList: this.mapBillsFromModelToJson(bills)}).pipe(
       retry(1),
       catchError(this.handleError),
     );

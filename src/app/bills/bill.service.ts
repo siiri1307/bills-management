@@ -55,7 +55,15 @@ export class BillService {
       map((data: any[]) => data.map((item: any) => this.adapter.fromJsonToModel(item))),
       catchError(this.handleError)
     );
+  }
 
+  public postBillsForSelectedMonth(monthByName: string) {
+    debugger
+    return this.http.post(this.accessPointUrl, JSON.stringify(monthByName), {headers: this.headers}).pipe(
+      retry(2),
+      map((data: any[]) => data.map((item: any) => this.adapter.fromJsonToModel(item))),
+      catchError(this.handleError)
+    );
   }
   
   public remove(bill: Bill) {
@@ -73,9 +81,12 @@ export class BillService {
 
   private handleError(error: HttpErrorResponse) {
     if(error.status === 422) {
-      console.error("Bills for the running month have already been created.");
+      return throwError("Bills for the selected month have already been created." + 
+      "Please delete bills for the selected month and add them again.");
     }
-    return throwError("Bills for the running month have already been created. Please delete the bills for this month and add them again.");
+    else{
+      return throwError("Unknown error occurred.")
+    }
   }
 
 }

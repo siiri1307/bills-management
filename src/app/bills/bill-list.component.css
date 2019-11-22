@@ -2,6 +2,10 @@ button {
     cursor: pointer;
 }
 
+a > img {
+    cursor: pointer;
+}
+
 table {
     text-align: left;
     width: 100%;
@@ -58,3 +62,12 @@ th.mat-sort-header-sorted {
     margin: 7px auto;
 }
 
+.btn-group {
+    cursor: pointer;
+}
+
+.add-bills-btn {
+    width: 160.56px;
+    height: 30.8px;
+    text-align: left;
+}

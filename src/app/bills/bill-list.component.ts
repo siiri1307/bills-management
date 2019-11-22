@@ -12,11 +12,13 @@ import { PDFService } from "../pdfs/pdf.service";
 import { saveAs } from 'file-saver';
 import { MatSort } from "@angular/material/sort";
 import { GoogleAuthService } from "../google-auth/google-auth.service";
+import { IntegerToMonthNamePipe } from "./month-name.pipe";
 
 @Component({
     selector: 'app-bill-list',
     templateUrl: './bill-list.component.html',
     styleUrls: ['./bill-list.component.css'],
+    providers: [IntegerToMonthNamePipe],
     animations: [
         trigger('detailExpand', [
           state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -29,12 +31,15 @@ import { GoogleAuthService } from "../google-auth/google-auth.service";
 export class BillListComponent implements OnInit, AfterViewInit {
 
     billsData;
-    columnsToDisplay = ['flat', 'total', 'sumToPay', 'monthToPayFor', 'paymentDeadline', 'delete'];
+    selectedBills: Array<Bill>;
+    columnsToDisplay = ['flat', 'total', 'sumToPay', 'monthToPayFor', 'paymentDeadline', 'delete', 'select'];
     expandedElement: Bill | null;
     _filterText: string;
 
     alert: string;
-   
+    selectedMonth: number;
+    monthName: string;
+
     // query the template to get references to template elements and inject them to a component
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
@@ -49,10 +54,11 @@ export class BillListComponent implements OnInit, AfterViewInit {
     @ViewChild("mailAlert", {static: false}) mailAlert: ElementRef;
 
     constructor(private billService: BillService, private budgetService: BudgetService, private logger: LogService, 
-        private pdfService: PDFService, private renderer: Renderer2, private googleAuthService: GoogleAuthService) {
+        private pdfService: PDFService, private renderer: Renderer2, private googleAuthService: GoogleAuthService, private monthNamePipe: IntegerToMonthNamePipe) {
+        this.monthName = this.monthNamePipe.transform(new Date().getMonth()+1);
         this.billsData = new MatTableDataSource<Bill>();
-        debugger
         this.fetchBills();
+        this.selectedBills = new Array<Bill>();
     }
 
     fetchBills(): void {
@@ -132,21 +138,20 @@ export class BillListComponent implements OnInit, AfterViewInit {
         });
     }
 
-    delete(bill): void {
-        this.billService.remove(bill).subscribe(() => {
-            this.fetchBills();
-        });
-    }
-
-    downloadBillsForRunningMonthAsPDF() {
-        this.pdfService.get().subscribe(doc => {
-            const blob = new Blob([doc], {type: 'application/zip'});
-            const fileName = 'test-bills.zip';
-            saveAs(blob, fileName);
+    addBillsForSelectedMonth(): void {
+        debugger
+        this.billService.postBillsForSelectedMonth(this.monthName).subscribe((data: any) => {
+            this.billsData.data = data;
         },
         err => {
             this.alert = err;
             this.renderer.addClass(this.alertRef.nativeElement, "show");
+        });
+    }
+
+    delete(bill): void {
+        this.billService.remove(bill).subscribe(() => {
+            this.fetchBills();
         });
     }
 
@@ -171,9 +176,21 @@ export class BillListComponent implements OnInit, AfterViewInit {
         return bill.id;
     }
 
+    downloadBillsForRunningMonthAsPDF() {
+        this.pdfService.getBillsZip(this.selectedBills).subscribe(doc => {
+            const blob = new Blob([doc], {type: 'application/zip'});
+            const fileName = 'test-bills.zip';
+            saveAs(blob, fileName);
+        },
+        err => {
+            this.alert = err;
+            this.renderer.addClass(this.alertRef.nativeElement, "show");
+        });
+    }
+
     sendMails() {
-        //this part needs refactoring
-        this.pdfService.post().subscribe( response => {
+        
+        this.pdfService.sendBillsWithEmail(this.selectedBills).subscribe( response => {
             //using nativeElement property to apply a DOM operation to div tag
             this.alert = "Your email has been successfully sent.";
             this.renderer.addClass(this.alertRef.nativeElement, "show");
@@ -183,5 +200,22 @@ export class BillListComponent implements OnInit, AfterViewInit {
             this.renderer.addClass(this.alertRef.nativeElement, "show");
         });
         //this.googleAuthService.sendEmails().subscribe();
+    }
+
+    setSelectedValue(value: string){
+        debugger
+        this.monthName = value;
+    }
+
+   toggleSelect(bill: Bill){
+        bill.isSelected = !bill.isSelected;
+        if(bill.isSelected){
+            this.selectedBills.push(bill);
+            bill.selectImage = "assets/check-mark-11-24-guacamole-green.png";
+        }
+        else{
+            this.selectedBills = this.selectedBills.filter(item => item.id !== bill.id);
+            bill.selectImage = "assets/check-mark-11-24-grey.png";
+        }     
     }
 }

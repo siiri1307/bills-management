@@ -16,6 +16,8 @@ export class Bill {
     "partialPayAmount": number;
     "status": number;
     "logs": LogEntry[];
+    "isSelected": boolean;
+    "selectImage": string;
 
     constructor(id: number, number: number, total: number, apartment: number, sumToPay: number, month: string, 
         deadline: string, partialPay: number, status: number, logs: LogEntry[]) {
@@ -29,6 +31,8 @@ export class Bill {
         this.partialPayAmount = partialPay;
         this.status = status;
         this.logs = logs;
+        this.isSelected = false;
+        this.selectImage = "assets/check-mark-11-24-grey.png";
     }
 }
 

@@ -1,10 +1,31 @@
 <body>
     <div class="bills-view-container">
         <div class="buttons-group">
-            <button class='btn btn-info btn-sm' (click)='downloadLogs()'><i class="fas fa-download fa-fw"></i>Download logs</button>
-            <button class='btn btn-success btn-sm' data-toggle="tooltip" data-placement="bottom" title="Add bills for the running month" (click)='addBills()'><i class="fas fa-plus fa-fw"></i>Add bills</button>
-            <button class='download-bills btn btn-info btn-sm' data-toggle="tooltip" data-placement="bottom" title="Download bills for the running month as a zip of PDFs" (click)='downloadBillsForRunningMonthAsPDF()'><i class="fas fa-file-pdf fa-fw"></i>Export bills</button>
-            <button class='btn btn-info btn-sm' (click)='sendMails()'><i class="fas fa-download fa-fw"></i>Email bills</button>
+            <button class='btn btn-info btn-sm' data-toggle="tooltip" data-placement="bottom" title="Download CSV payment logs" (click)='downloadLogs()'><i class="fas fa-download fa-fw"></i>Download logs</button>
+            
+            <div class="btn-group">
+                <button type="button" class="btn btn-success btn-sm add-bills-btn"  data-toggle="tooltip" data-placement="bottom" title="Add bills for the selected month" (click)="addBillsForSelectedMonth()"><i class="fas fa-plus fa-fw"></i>Add {{monthName}} bills </button>
+                <button type="button" class="btn btn-success btn-sm dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="sr-only">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" (click)='setSelectedValue($event.target.textContent)'>January</a>
+                  <a class="dropdown-item" (click)='setSelectedValue($event.target.textContent)'>February</a>
+                  <a class="dropdown-item" (click)='setSelectedValue($event.target.textContent)'>March</a>
+                  <a class="dropdown-item" (click)='setSelectedValue($event.target.textContent)'>April</a>
+                  <a class="dropdown-item" (click)='setSelectedValue($event.target.textContent)'>May</a>
+                  <a class="dropdown-item" (click)='setSelectedValue($event.target.textContent)'>June</a>
+                  <a class="dropdown-item" (click)='setSelectedValue($event.target.textContent)'>July</a>
+                  <a class="dropdown-item" (click)='setSelectedValue($event.target.textContent)'>August</a>
+                  <a class="dropdown-item" (click)='setSelectedValue($event.target.textContent)'>September</a>
+                  <a class="dropdown-item" (click)='setSelectedValue($event.target.textContent)'>October</a>
+                  <a class="dropdown-item" (click)='setSelectedValue($event.target.textContent)'>November</a>
+                  <a class="dropdown-item" (click)='setSelectedValue($event.target.textContent)'>December</a>
+                </div>
+              </div>
+
+            <button class='download-bills btn btn-info btn-sm' data-toggle="tooltip" data-placement="bottom" title="Download selected PDF bills" (click)='downloadBillsForRunningMonthAsPDF()'><i class="fas fa-file-pdf fa-fw"></i>Export bills</button>
+            <button class='btn btn-info btn-sm' data-toggle="tooltip" data-placement="bottom" title="Send selected PDF bills" (click)='sendMails()'><i class="fas fa-download fa-fw"></i>Email bills</button>
         </div>
     </div>
 
@@ -53,6 +74,13 @@
                 <th mat-header-cell *matHeaderCellDef>Delete</th>
                 <td mat-cell *matCellDef="let bill" (click)="$event.stopPropagation()">
                     <button id="delete-bill" (click)='delete(bill)'><i class="fa fa-trash fa-2x"></i></button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>Select</th>
+                <td mat-cell *matCellDef="let bill" (click)="$event.stopPropagation()">
+                    <a (click)='toggleSelect(bill)'><img src={{bill.selectImage}}></a>
                 </td>
             </ng-container>
                     

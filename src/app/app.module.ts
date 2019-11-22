@@ -27,6 +27,7 @@ import { GoogleAuthService } from './google-auth/google-auth.service';
 import { LogInPageComponent } from './log-in-page/log-in-page.component';
 import { RouteActivationGuard } from './route-activation-guard';
 import { HeaderComponent } from './header/header.component';
+import { PDFService } from './pdfs/pdf.service';
 
 
 @NgModule({
