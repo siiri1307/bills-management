@@ -1,0 +1,7 @@
+Changed database context to 'BillsContext-7e51ad23-0502-49d0-b667-4c69610125e7'.
+BillId      Apartment   MonthToPayFor Number      PaymentDeadline                        Status      SumToPay                 Total                   
+----------- ----------- ------------- ----------- -------------------------------------- ----------- ------------------------ ------------------------
+
+(0 rows affected)
+
+(39 rows affected)

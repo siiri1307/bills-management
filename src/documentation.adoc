@@ -1,0 +1,43 @@
+== SMTP
+
+*Gmail* is used as an SMTP server (allows sending up to 2000 messages a day).
+A separate Gmail account is set up and configured with 2-factor authentication.
+
+SMTP configuration is located in the `appsettings.json` file, and contains the following parameters in the `EmailConfiguration`:
+
+[code, json]
+----
+"SmtpServer": "smtp.gmail.com"
+"SmtpPort": 587 [this port forces the connection to use TLS]
+"Username": Gmail address
+"Password": App password. This allows 2-step verification users to access their account through other apps. 
+"MailFrom": The email address where the bills originate from
+"MailTo": List of email addresses to send the selected bills to
+----
+
+See also https://galleryserverpro.com/use-gmail-as-your-smtp-server-even-when-using-2-factor-authentication-2-step-verification/
+
+== Database
+*sqlcmd* utility is used to communicate with an instance of MSSQL Local DB. 
+
+Connect to the instance, by running from the command line:
+
+`sqlcmd -S (localdb)\MSSQLLocalDB`
+
+To automatically add bill entries to the Bill db table, Transact-SQL statements are used in a script. Point the sqlcmd utility to the script file using the '-i' (for input) and execute:
+
+`sqlcmd -S (localdb)\MSSQLLocalDB -i C:\Users\s.saar\Desktop\Personal\bills-management\create_bills.sql -o C:\Users\s.saar\Desktop\Personal\bills-management\bills-in-db.txt`
+
+== Bugs
+* Year in PDF name is hardcoded and is wrong for last year's bills
+
+* Show spinner or other indicator while the emails are being sent
+
+* Sorting of bills should be decreasing based on month-year combo
+
+* Think about if the error handling should be refactored with the Http Interceptor https://scotch.io/bar-talk/error-handling-with-angular-6-tips-and-best-practices192. Maybe also add errorDialogService, like here https://www.digitalocean.com/community/tutorials/how-to-use-angular-interceptors-to-manage-http-requests-and-error-handling
+
+Annan sisse valitud arve. Arve toPay väli moodustab eelmise kuu kohustuse. Sellele lisandub veel kõikide arvete toPay osa mille maksetähtaeg on möödas (võlg). Eeldus: valitakse arve, mille deadline ei ole veel käes.
+
+Kui valida arved, mille tähtajad on juba möödas, siis lisanduks üleliigne ühe kuu summa, sest arvestataks valitud arve toPay'd ja veel võlgevusi, mille hulgas siis ka valitud arve oma. 
+
