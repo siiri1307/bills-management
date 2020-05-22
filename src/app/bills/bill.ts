@@ -1,5 +1,4 @@
 import { LogEntry } from "../shared/log-entry";
-import { Input } from "@angular/core";
 import { Injectable } from "@angular/core";
 import { Adapter } from "../models/adapter";
 
@@ -17,6 +16,7 @@ export class Bill {
   "logs": LogEntry[];
   "isSelected": boolean;
   "selectImage": string;
+  "canEdit": boolean;
 
   constructor(
     id: number,
@@ -44,11 +44,12 @@ export class Bill {
     this.logs = logs;
     this.isSelected = false;
     this.selectImage = "assets/check-mark-11-24-grey.png";
+    this.canEdit = false;
   }
 }
 
 @Injectable({
-  providedIn: "root"
+  providedIn: "root",
 })
 
 // Model-Adapter pattern: adapter is an interface to ingest the API's data and build instances of the model
@@ -80,7 +81,7 @@ export class BillAdapter implements Adapter<Bill> {
       YearToPayFor: bill.yearToPayFor,
       PaymentDeadline: bill.paymentDeadline,
       Status: bill.status,
-      Logs: bill.logs
+      Logs: bill.logs,
     };
 
     return <JSON>o;
