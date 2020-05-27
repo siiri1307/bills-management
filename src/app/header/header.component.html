@@ -1,14 +1,27 @@
-<div *ngIf="isLoggedIn$ | async" style="text-align:center">
-    <nav class='navbar navbar-expand navbar-light bg-light'>
-        <ul class='nav nav-pills'>
-          <li><a class='nav-link' [routerLink]="['/home']">Home</a></li>
-          <li><a class='nav-link' [routerLink]="['/bills']">Bills</a></li>
-          <li><a class='nav-link' [routerLink]="['/budget']">Budget</a></li>
-        </ul>
-        <button (click)= "logOut()" *ngIf="isLoggedIn$ | async">Log out</button>
-        <div>You are logged in as {{user$ | async}}</div>
-      </nav>
-      <h1>
-      </h1>
+<div *ngIf="isLoggedIn$ | async" style="text-align: center;">
+  <nav class="navbar navbar-expand navbar-light bg-light">
+    <ul class="nav nav-pills">
+      <li>
+        <a class="nav-link" [routerLink]="['/bills']">Bills</a>
+      </li>
+      <li class="budget">
+        <a class="nav-link" [routerLink]="['/budget']">Apartments</a>
+      </li>
+      <li class="budget">
+        <a class="nav-link" [routerLink]="['/budget']">Budget</a>
+      </li>
+    </ul>
+    <div class="navbar-nav ml-auto .login-container">
+      <div class="logged-in-user nav-item">
+        You are logged in as {{ user$ | async }}
+      </div>
+      <button
+        (click)="logOut()"
+        *ngIf="isLoggedIn$ | async"
+        class="btn btn-danger btn-sm nav-item logout-btn"
+      >
+        Log out
+      </button>
+    </div>
+  </nav>
 </div>
-  
