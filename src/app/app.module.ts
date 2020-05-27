@@ -22,7 +22,7 @@ import {
   MatSortModule,
   MatInputModule,
   DateAdapter,
-  MAT_DATE_LOCALE
+  MAT_DATE_LOCALE,
 } from "@angular/material";
 import { BillPartialPayComponent } from "./bill-partial-pay/bill-partial-pay.component";
 import { CdkTableModule } from "@angular/cdk/table";
@@ -37,9 +37,11 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 //import { MatNativeDateModule } from "@angular/material";
 import {
   MomentDateAdapter,
-  MAT_MOMENT_DATE_ADAPTER_OPTIONS
+  MAT_MOMENT_DATE_ADAPTER_OPTIONS,
 } from "@angular/material-moment-adapter";
 import { ReactiveFormsModule } from "@angular/forms";
+import { SpinnerComponent } from "./spinner/spinner.component";
+import { PaymentStatusToText } from "src/app/bills/payment-status.pipe";
 @NgModule({
   declarations: [
     AppComponent,
@@ -50,7 +52,9 @@ import { ReactiveFormsModule } from "@angular/forms";
     IntegerToMonthNamePipe,
     BillPartialPayComponent,
     LogInPageComponent,
-    HeaderComponent
+    HeaderComponent,
+    SpinnerComponent,
+    PaymentStatusToText,
   ],
   imports: [
     BrowserModule,
@@ -74,20 +78,20 @@ import { ReactiveFormsModule } from "@angular/forms";
       {
         path: "bills",
         component: BillListComponent,
-        canActivate: [RouteActivationGuard]
+        canActivate: [RouteActivationGuard],
       },
       {
         path: "home",
         component: HomeComponent,
-        canActivate: [RouteActivationGuard]
+        canActivate: [RouteActivationGuard],
       },
       {
         path: "budget",
         component: BudgetComponent,
-        canActivate: [RouteActivationGuard]
+        canActivate: [RouteActivationGuard],
       },
-      { path: "", component: LogInPageComponent }
-    ])
+      { path: "", component: LogInPageComponent },
+    ]),
   ],
   providers: [
     BillService,
@@ -97,14 +101,14 @@ import { ReactiveFormsModule } from "@angular/forms";
     RouteActivationGuard,
     {
       provide: AuthServiceConfig,
-      useFactory: getAuthServiceConfigs
+      useFactory: getAuthServiceConfigs,
     },
     {
       provide: DateAdapter,
       useClass: MomentDateAdapter,
-      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS]
-    }
+      deps: [MAT_DATE_LOCALE, MAT_MOMENT_DATE_ADAPTER_OPTIONS],
+    },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

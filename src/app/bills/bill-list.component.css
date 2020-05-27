@@ -1,73 +1,125 @@
 button {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 a > img {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 table {
-    text-align: left;
-    width: 100%;
+  text-align: left;
+  width: 100%;
 }
 
 .bills-view-container {
-    width: 80%;
-    margin: auto;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .buttons-group > * {
-    margin-right: 5px;
+  margin-right: 5px;
 }
 
 .mat-header-cell {
-    text-align: left;
+  text-align: left;
 }
 
 .example-element-detail {
-    overflow: hidden;
-    display: flex;
+  overflow: hidden;
+  display: flex;
 }
 
 tr.example-element-row:not(.example-expanded-row):hover {
-    background: #FCFBFA;
+  background: #fcfbfa;
 }
 
 tr.example-element-row:not(.example-expanded-row):active {
-    background: #efefef;
+  background: #efefef;
 }
 
 .example-element-row td {
-border-bottom-width: 0;
+  border-bottom-width: 0;
+  padding-top: 1.5vh;
+  padding-bottom: 1.5vh;
 }
 
 tr.example-detail-row {
-    height: 0;
+  height: 0;
 }
 
 #bill-status-label {
-    font-weight: bold;
+  font-weight: bold;
+  margin-right: 0.4vw;
 }
 
-#bill-select-form {
-    margin-top: 10px;
-    margin-bottom: 12px;
+#bill-filter-by-status {
+  margin-top: 10px;
+  margin-bottom: 17px;
 }
 
 th.mat-sort-header-sorted {
-    color: black;
+  color: black;
 }
 
 .expandable {
-    margin: 7px auto;
+  margin: 7px auto;
 }
 
 .btn-group {
-    cursor: pointer;
+  cursor: pointer;
 }
 
-.add-bills-btn {
-    width: 160.56px;
-    height: 30.8px;
-    text-align: left;
+.mat-column-select {
+  width: 11.11%;
+}
+
+.mat-column-flat {
+  width: 11.11%;
+}
+
+.mat-column-total {
+  width: 11.11%;
+}
+
+.mat-column-sumToPay {
+  width: 11.11%;
+}
+
+.mat-column-monthToPayFor {
+  width: 11.11%;
+}
+
+.mat-column-paymentDeadline {
+  width: 11.11%;
+}
+
+.mat-column-edit {
+  width: 11.11%;
+}
+
+.mat-column-delete {
+  width: 11.11%;
+}
+
+.mat-column-paid {
+  width: 11.11%;
+}
+
+.mat-column-comment {
+  width: 11.11%;
+}
+
+#comment {
+  width: 90%;
+  word-break: break-word;
+}
+
+.edit-bill-btn {
+}
+
+th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+  font-size: 13px;
 }

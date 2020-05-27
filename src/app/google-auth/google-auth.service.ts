@@ -1,21 +1,23 @@
-import { Injectable, OnInit } from '@angular/core';
-import { SocialUser, AuthService, GoogleLoginProvider } from 'angularx-social-login';
-import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
+import { Injectable, OnInit } from "@angular/core";
+import {
+  SocialUser,
+  AuthService,
+  GoogleLoginProvider,
+} from "angularx-social-login";
+import { Router } from "@angular/router";
+import { BehaviorSubject, Observable } from "rxjs";
+import { map } from "rxjs/operators";
+import { HttpHeaders, HttpClient } from "@angular/common/http";
+import { environment } from "src/environments/environment";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
-
 export class GoogleAuthService {
-
   private userName = new BehaviorSubject<string>(null);
 
   private userEmail: string;
-  private temp_token; 
+  private temp_token;
 
   public accessToken = new BehaviorSubject<string>(null);
 
@@ -24,44 +26,47 @@ export class GoogleAuthService {
   private logInFailed = new BehaviorSubject<boolean>(false);
 
   private headers: HttpHeaders;
-  
+
   baseUrl = environment.baseUrl;
 
-  private readonly serviceUrl: string = this.baseUrl + '/Authenticate';
+  private readonly serviceUrl: string = this.baseUrl + "/Authenticate";
 
-  constructor(private authService: AuthService, private router: Router, private http: HttpClient) { 
-    this.headers = new HttpHeaders({'Content-Type': 'application/json'});
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private http: HttpClient
+  ) {
+    this.headers = new HttpHeaders({ "Content-Type": "application/json" });
   }
 
   signInWithGoogle(): void {
     this.authService.signIn(GoogleLoginProvider.PROVIDER_ID).then((user) => {
-      
-      this.postToken(JSON.stringify(user.idToken)).subscribe(x => {
-        //token successfully validated
-        this.temp_token = user.idToken;
-        this.userName.next(user.firstName);
-        this.userEmail = user.email;
-        console.log("Id token after sign-in: " + user.idToken);
-        this.accessToken.next(user.idToken);
-        console.log("User ID:")
-        console.log(user.name);
-        this.loggedIn.next(true);
-        this.router.navigateByUrl('/home'); 
-      },
-      //status code 401 returned, if the token is not a valid JWT signed by Google
-      err => {
-        console.log("Google issued JWT is not valid!");
-        this.logInFailed.next(true);
-          }
-        );
-      }
-    );
+      this.postToken(JSON.stringify(user.idToken)).subscribe(
+        (x) => {
+          //token successfully validated
+          this.temp_token = user.idToken;
+          this.userName.next(user.firstName);
+          this.userEmail = user.email;
+          console.log("Id token after sign-in: " + user.idToken);
+          this.accessToken.next(user.idToken);
+          console.log("User ID:");
+          console.log(user.name);
+          this.loggedIn.next(true);
+          this.router.navigateByUrl("/bills");
+        },
+        //status code 401 returned, if the token is not a valid JWT signed by Google
+        (err) => {
+          console.log("Google issued JWT is not valid!");
+          this.logInFailed.next(true);
+        }
+      );
+    });
   }
 
   signOut(): void {
     this.authService.signOut().then(() => {
       this.loggedIn.next(false);
-      this.router.navigateByUrl('');
+      this.router.navigateByUrl("");
     });
   }
 
@@ -84,18 +89,22 @@ export class GoogleAuthService {
   getUserEmail() {
     //return this.userEmail.asObservable();
   }
-  
+
   postToken(idToken: string) {
-    
     console.log("Received access token: " + idToken);
     console.log("Posting to backend ..");
 
-    return this.http.post(this.serviceUrl + "/validate", idToken, {headers: this.headers});
+    return this.http.post(this.serviceUrl + "/validate", idToken, {
+      headers: this.headers,
+    });
   }
 
-  sendEmails() {  
+  sendEmails() {
     //var userEmail = this.userEmail.asObservable();
-    return this.http.post(this.serviceUrl + "/send", JSON.stringify(this.temp_token), {headers: this.headers});
+    return this.http.post(
+      this.serviceUrl + "/send",
+      JSON.stringify(this.temp_token),
+      { headers: this.headers }
+    );
   }
-
 }

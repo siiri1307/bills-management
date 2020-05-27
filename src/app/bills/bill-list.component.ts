@@ -1,4 +1,3 @@
-// Component class handles data and user interactions programmatically.
 import {
   Component,
   OnInit,
@@ -26,10 +25,12 @@ import { saveAs } from "file-saver";
 import { MatSort } from "@angular/material/sort";
 import { GoogleAuthService } from "../google-auth/google-auth.service";
 import { IntegerToMonthNamePipe } from "./month-name.pipe";
+import { PaymentStatusToText } from "./payment-status.pipe";
 import * as _moment from "moment";
-import { FormControl } from "@angular/forms";
+import { FormControl, NgForm } from "@angular/forms";
 import { MatDatepicker, MAT_DATE_FORMATS } from "@angular/material";
 import { subscribeOn } from "rxjs/operators";
+import { FormsModule } from "@angular/forms";
 
 export const MY_FORMATS = {
   parse: {
@@ -52,6 +53,7 @@ const moment = _moment;
     IntegerToMonthNamePipe,
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
+  /*
   animations: [
     trigger("detailExpand", [
       state("collapsed", style({ height: "0px", minHeight: "0" })),
@@ -61,7 +63,7 @@ const moment = _moment;
         animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")
       ),
     ]),
-  ],
+  ],*/
 })
 export class BillListComponent implements OnInit, AfterViewInit {
   date = new FormControl(moment());
@@ -74,14 +76,17 @@ export class BillListComponent implements OnInit, AfterViewInit {
     "sumToPay",
     "monthToPayFor",
     "paymentDeadline",
+    //"delete",
+    "paid",
+    "comment",
     "edit",
-    "delete",
   ];
 
   expandedElement: Bill | null;
   _filterText: string;
 
   alert: string;
+  error: string;
   selectedMonth: number;
 
   // query the template to get references to template elements and inject them to a component
@@ -90,6 +95,10 @@ export class BillListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   @ViewChild("alertRef", { static: false }) alertRef: ElementRef;
+
+  @ViewChild("errorRef", { static: false }) errorRef: ElementRef;
+
+  @ViewChild("sumForm", { read: NgForm, static: false }) sumForm: NgForm;
 
   showSpinner: boolean = false;
 
@@ -134,9 +143,37 @@ export class BillListComponent implements OnInit, AfterViewInit {
           return moment("10-" + bill.monthToPayFor + "-" + bill.yearToPayFor);
       }
     };
+    /*
+    this.sumForm.statusChanges.subscribe((result) =>
+      console.log("Vaata siia: " + result)
+    );*/
   }
 
-  updateBill(bill: Bill, comment: string): void {
+  toggleSaveDisabledState(bill: Bill) {
+    if (bill.total === null) {
+      this.error = "Sum is required.";
+      this.renderer.addClass(this.errorRef.nativeElement, "show");
+      bill.saveBtnDisabled = true;
+    } else if (bill.total < 0) {
+      this.error = "Sum cannot be negative";
+      this.renderer.addClass(this.errorRef.nativeElement, "show");
+      bill.saveBtnDisabled = true;
+    } else if (bill.partialPayAmount < 0) {
+      this.error = "Amount cannot be negative";
+      this.renderer.addClass(this.errorRef.nativeElement, "show");
+      bill.saveBtnDisabled = true;
+    } else {
+      bill.saveBtnDisabled = false;
+    }
+  }
+
+  updateBill(bill: Bill): void {
+    //make total 0 to halt payments for certain months
+    if (bill.total == 0) {
+      bill.sumToPay = 0;
+      bill.partialPayAmount = 0;
+    }
+
     bill.sumToPay -= bill.partialPayAmount;
 
     bill.status = 2;
@@ -147,7 +184,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
 
     const log = this.logger.log(
       "Paid " + bill.partialPayAmount + " EUR on " + new Date() + ".",
-      comment
+      bill.comment
     );
 
     bill.logs.push(log);
@@ -192,6 +229,12 @@ export class BillListComponent implements OnInit, AfterViewInit {
     );
   }
 
+  bulkDelete(): void {
+    for (let bill of this.selectedBills) {
+      this.delete(bill);
+    }
+  }
+
   delete(bill): void {
     this.billService.remove(bill).subscribe(() => {
       this.fetchBills();
@@ -200,6 +243,10 @@ export class BillListComponent implements OnInit, AfterViewInit {
 
   hideAlert() {
     this.renderer.removeClass(this.alertRef.nativeElement, "show");
+  }
+
+  hideError() {
+    this.renderer.removeClass(this.errorRef.nativeElement, "show");
   }
 
   trackById(index: number, bill: Bill) {
@@ -215,7 +262,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
       this.pdfService.getBillsZip(this.selectedBills).subscribe(
         (doc) => {
           const blob = new Blob([doc], { type: "application/zip" });
-          const fileName = "test-bills.zip";
+          const fileName = "bills.zip";
           saveAs(blob, fileName);
         },
         (err) => {
@@ -270,9 +317,10 @@ export class BillListComponent implements OnInit, AfterViewInit {
       bill.canEdit = false;
       event.target.value = "Edit";
       event.target.innerHTML = "Edit";
-      bill.sumToPay = bill.total;
-      bill.partialPayAmount = bill.total;
-      this.billService.update(bill).subscribe();
+      //bill.sumToPay = bill.total;
+      //bill.partialPayAmount = bill.total;
+      this.updateBill(bill);
+      //this.billService.update(bill).subscribe();
     }
   }
 

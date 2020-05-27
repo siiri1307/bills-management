@@ -1,20 +1,49 @@
-<form class="form-inline" #billForm="ngForm" (ngSubmit)="submitForm(bill, comment.value)" #paidAmountForm="ngForm">
-    
-    <div class="form-group partial-pay">
+<form
+  class="form-inline partial-payment-container"
+  #billForm="ngForm"
+  (ngSubmit)="submitForm(bill, comment.value)"
+  #paidAmountForm="ngForm"
+>
+  <div class="form-group partial-pay">
+    <label for="paidAmount">Paid amount:</label>
+    <!--min validation is not supported in template-driven forms #16352-->
+    <input
+      type="number"
+      id="paidAmount"
+      name="paidAmount"
+      [disabled]="bill.status == 1"
+      class="form-control form-control-sm"
+      min="0"
+      #validator="ngModel"
+      [(ngModel)]="bill.partialPayAmount"
+    />
 
-        <label for="paidAmount">Paid amount:</label>
-        <!--min validation is not supported in template-driven forms #16352-->
-        <input type="number" id="paidAmount" name="paidAmount" [disabled]="bill.status == 1" class="form-control form-control-sm" min="0" #validator="ngModel" [(ngModel)]="bill.partialPayAmount">
-            
-        <div *ngIf="validator.invalid && (validator.dirty || validator.touched)" class="alert alert-danger" role="alert">
-            <div *ngIf="validator.errors?.min">Please enter number greater than 0</div>
-        </div>
-        
-        <label for="comment">Comment:</label>
-        <input type="text" id="comment" class="form-control form-control-sm" name="comment" #comment [disabled]="bill.status == 1" />
-    
+    <div
+      *ngIf="validator.invalid && (validator.dirty || validator.touched)"
+      class="alert alert-danger p-1 m-0"
+      role="alert"
+    >
+      <div *ngIf="validator.errors?.min">
+        Please enter number greater than 0
+      </div>
     </div>
 
-    <button type="submit" [disabled]="bill.status == 1 || billForm.form.invalid" class="btn btn-light btn-sm">Submit</button> 
+    <label for="comment">Comment:</label>
+    <input
+      type="text"
+      id="comment"
+      class="form-control form-control-sm"
+      name="comment"
+      #comment
+      [disabled]="bill.status == 1"
+    />
+  </div>
 
+  <button
+    type="submit"
+    [disabled]="bill.status == 1 || billForm.form.invalid"
+    class="btn btn-outline-success btn-sm"
+  >
+    Save
+  </button>
 </form>

@@ -17,6 +17,8 @@ export class Bill {
   "isSelected": boolean;
   "selectImage": string;
   "canEdit": boolean;
+  "saveBtnDisabled": boolean;
+  "comment": string;
 
   constructor(
     id: number,
@@ -29,7 +31,8 @@ export class Bill {
     deadline: string,
     partialPay: number,
     status: number,
-    logs: LogEntry[]
+    logs: LogEntry[],
+    comment: string
   ) {
     this.id = id;
     this.number = number;
@@ -45,6 +48,8 @@ export class Bill {
     this.isSelected = false;
     this.selectImage = "assets/check-mark-11-24-grey.png";
     this.canEdit = false;
+    this.saveBtnDisabled = false;
+    this.comment = comment;
   }
 }
 
@@ -66,7 +71,8 @@ export class BillAdapter implements Adapter<Bill> {
       item.paymentDeadline,
       (item.partialPayAmount = item.sumToPay),
       item.status,
-      item.logs
+      item.logs,
+      item.comment
     );
   }
 
@@ -82,6 +88,7 @@ export class BillAdapter implements Adapter<Bill> {
       PaymentDeadline: bill.paymentDeadline,
       Status: bill.status,
       Logs: bill.logs,
+      Comment: bill.comment,
     };
 
     return <JSON>o;

@@ -1,4 +1,15 @@
-h1 {
-    margin-bottom: 20px;
-    margin-top: 20px;
+.nav {
+  margin-left: 5%;
+}
+
+nav {
+  margin-bottom: 5vh;
+}
+
+.logged-in-user {
+  margin-right: 1vw;
+}
+
+.logout-btn {
+  margin-right: 5vw;
 }
