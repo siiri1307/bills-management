@@ -29,7 +29,7 @@ export class GoogleAuthService {
 
   baseUrl = environment.baseUrl;
 
-  private readonly serviceUrl: string = this.baseUrl + "/Authenticate";
+  private serviceUrl: string = this.baseUrl + "/Authenticate";
 
   constructor(
     private authService: AuthService,
