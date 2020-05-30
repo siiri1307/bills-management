@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseUrl: "https://bills-management-api.herokuapp.com/api",
+  baseUrl: "https://bills-management-api.azurewebsites.net/api",
 };
