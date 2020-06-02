@@ -2,7 +2,18 @@
   <button class="btn btn-danger login-btn" (click)="logIn()">
     Sign in with Gmail
   </button>
-  <div *ngIf="showLogInFailedMessage">
+  <div
+    *ngIf="showLogInFailedMessage"
+    class="alert alert-warning logInFailedMsg"
+  >
     Something went wrong with Google sign-in. Please try again.
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="hideErrorMsg()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
 </div>

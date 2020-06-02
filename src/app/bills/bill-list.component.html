@@ -265,7 +265,7 @@
 
     <mat-paginator [pageSize]="3" [pageSizeOptions]="[3, 6]"> </mat-paginator>
 
-    <app-spinner *ngIf="showSpinner"></app-spinner>
+    <app-spinner *ngIf="showSpinner" [message]="spinnerMessage"></app-spinner>
 
     <div
       #alertRef

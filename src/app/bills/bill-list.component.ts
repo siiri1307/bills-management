@@ -101,6 +101,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
   @ViewChild("sumForm", { read: NgForm, static: false }) sumForm: NgForm;
 
   showSpinner: boolean = false;
+  spinnerMessage: string;
 
   constructor(
     private billService: BillService,
@@ -259,13 +260,19 @@ export class BillListComponent implements OnInit, AfterViewInit {
       this.alert = "No bills have been selected for export.";
       this.renderer.addClass(this.alertRef.nativeElement, "show");
     } else {
+      this.showSpinner = true;
+      this.spinnerMessage = "Fetching PDF bills ...";
       this.pdfService.getBillsZip(this.selectedBills).subscribe(
         (doc) => {
+          this.showSpinner = false;
+          this.spinnerMessage = "";
           const blob = new Blob([doc], { type: "application/zip" });
           const fileName = "bills.zip";
           saveAs(blob, fileName);
         },
         (err) => {
+          this.showSpinner = false;
+          this.spinnerMessage = "";
           this.alert = err;
           this.renderer.addClass(this.alertRef.nativeElement, "show");
         }
@@ -279,19 +286,21 @@ export class BillListComponent implements OnInit, AfterViewInit {
       this.renderer.addClass(this.alertRef.nativeElement, "show");
     } else {
       this.showSpinner = true;
+      this.spinnerMessage = "Sending email ...";
       this.pdfService.sendBillsWithEmail(this.selectedBills).subscribe(
         (response) => {
           this.showSpinner = false;
+          this.spinnerMessage = "";
           this.alert = "Your email has been successfully sent.";
           this.renderer.addClass(this.alertRef.nativeElement, "show");
         },
         (err) => {
           this.showSpinner = false;
+          this.spinnerMessage = "";
           this.alert = err;
           this.renderer.addClass(this.alertRef.nativeElement, "show");
         }
       );
-      //this.googleAuthService.sendEmails().subscribe();
     }
   }
 

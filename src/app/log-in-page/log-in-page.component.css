@@ -1,6 +1,3 @@
-html {
-}
-
 .login-screen {
   background-image: url(/assets/design-mural.jpg);
   background-repeat: no-repeat;
@@ -19,12 +16,15 @@ html {
   -webkit-align-items: center;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  flex-wrap: wrap;
 }
 
-img.bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  min-width: 100%;
-  min-height: 100%;
+.logInFailedMsg {
+  position: absolute;
+  top: 30vh;
+}
+
+.alert-danger {
+  background-color: white;
 }
