@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'http://localhost:50022/api'
+  baseUrl: 'http://localhost:50022/api',
+  skipLoginAllowed: true
 };
 
 /*

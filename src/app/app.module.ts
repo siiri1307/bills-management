@@ -34,7 +34,6 @@ import { RouteActivationGuard } from "./route-activation-guard";
 import { HeaderComponent } from "./header/header.component";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldModule } from "@angular/material/form-field";
-//import { MatNativeDateModule } from "@angular/material";
 import {
   MomentDateAdapter,
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
@@ -111,4 +110,4 @@ import { PaymentStatusToText } from "src/app/bills/payment-status.pipe";
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

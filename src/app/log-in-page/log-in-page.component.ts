@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { GoogleAuthService } from "../google-auth/google-auth.service";
 import { Subscription } from "rxjs";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-log-in",
@@ -9,7 +10,8 @@ import { Subscription } from "rxjs";
 })
 export class LogInPageComponent implements OnInit {
   showLogInFailedMessage: boolean;
-  isHidden: boolean = false;
+  skipLoginAllowed = environment.skipLoginAllowed;
+
   private subscription: Subscription;
 
   constructor(private authService: GoogleAuthService) {
@@ -18,7 +20,7 @@ export class LogInPageComponent implements OnInit {
       .subscribe((e) => (this.showLogInFailedMessage = e));
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   logIn() {
     this.authService.signInWithGoogle();
@@ -30,5 +32,9 @@ export class LogInPageComponent implements OnInit {
 
   hideErrorMsg() {
     this.showLogInFailedMessage = undefined;
+  }
+
+  changeStatusToLoggedIn() {
+    this.authService.setIsLoggedIn();
   }
 }

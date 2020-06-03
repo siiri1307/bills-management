@@ -28,3 +28,11 @@
 .alert-danger {
   background-color: white;
 }
+
+.skip-login-link {
+ font-size: 17px;
+}
+
+.skip-login-container {
+  margin-top: 15px;
+}

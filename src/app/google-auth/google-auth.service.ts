@@ -1,12 +1,10 @@
-import { Injectable, OnInit } from "@angular/core";
+import { Injectable } from "@angular/core";
 import {
-  SocialUser,
   AuthService,
   GoogleLoginProvider,
 } from "angularx-social-login";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Observable } from "rxjs";
-import { map } from "rxjs/operators";
 import { HttpHeaders, HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 
@@ -64,10 +62,19 @@ export class GoogleAuthService {
   }
 
   signOut(): void {
-    this.authService.signOut().then(() => {
-      this.loggedIn.next(false);
-      this.router.navigateByUrl("");
-    });
+    //this mocks signing out, when user skipped signing in (only in dev mode)
+    this.authService.authState.subscribe(user => {
+      if (user == null) {
+        this.router.navigateByUrl("");
+        this.loggedIn.next(false);
+      }
+      else {
+        this.authService.signOut().then(() => {
+          this.loggedIn.next(false);
+          this.router.navigateByUrl("");
+        });
+      }
+    })
   }
 
   getLogInFailedStatus(): Observable<boolean> {
@@ -106,5 +113,11 @@ export class GoogleAuthService {
       JSON.stringify(this.temp_token),
       { headers: this.headers }
     );
+  }
+
+  setIsLoggedIn() {
+    this.loggedIn.next(true);
+    this.userName.next("guest");
+    this.router.navigateByUrl("/bills");
   }
 }

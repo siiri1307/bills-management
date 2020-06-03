@@ -2,17 +2,12 @@
   <button class="btn btn-danger login-btn" (click)="logIn()">
     Sign in with Gmail
   </button>
-  <div
-    *ngIf="showLogInFailedMessage"
-    class="alert alert-warning logInFailedMsg"
-  >
+  <div *ngIf="skipLoginAllowed" class="skip-login-container">
+    <a [routerLink]="" class="skip-login-link" (click)="changeStatusToLoggedIn()">Skip login</a>
+  </div>
+  <div *ngIf="showLogInFailedMessage" class="alert alert-warning logInFailedMsg">
     Something went wrong with Google sign-in. Please try again.
-    <button
-      type="button"
-      class="close"
-      aria-label="Close"
-      (click)="hideErrorMsg()"
-    >
+    <button type="button" class="close" aria-label="Close" (click)="hideErrorMsg()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
