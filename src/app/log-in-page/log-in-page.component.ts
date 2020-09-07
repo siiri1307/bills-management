@@ -11,13 +11,17 @@ import { environment } from "src/environments/environment";
 export class LogInPageComponent implements OnInit {
   showLogInFailedMessage: boolean;
   skipLoginAllowed = environment.skipLoginAllowed;
+  error: string;
 
   private subscription: Subscription;
 
   constructor(private authService: GoogleAuthService) {
     this.subscription = this.authService
       .getLogInFailedStatus()
-      .subscribe((e) => (this.showLogInFailedMessage = e));
+      .subscribe((e) => {
+        this.showLogInFailedMessage = e;
+        this.error = authService.getErrorMessage();
+      });
   }
 
   ngOnInit() { }

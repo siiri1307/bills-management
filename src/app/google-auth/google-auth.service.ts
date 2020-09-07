@@ -29,6 +29,8 @@ export class GoogleAuthService {
 
   private serviceUrl: string = this.baseUrl + "/authenticate";
 
+  private errorMessage: string;
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -53,8 +55,14 @@ export class GoogleAuthService {
           this.router.navigateByUrl("/bills");
         },
         //status code 401 returned, if the token is not a valid JWT signed by Google
-        (err) => {
-          console.log("Google issued JWT is not valid!");
+        (error) => {
+          if (error.status == 401) {
+            console.log("Google issued JWT is not valid!");
+            this.errorMessage = "Something went wrong with Google sign-in. Please try again."
+          }
+          else if (error.status == 403) {
+            this.errorMessage = "You are not authorized to use this system. Please contact the admin to get access."
+          }
           this.logInFailed.next(true);
         }
       );
@@ -119,5 +127,9 @@ export class GoogleAuthService {
     this.loggedIn.next(true);
     this.userName.next("guest");
     this.router.navigateByUrl("/bills");
+  }
+
+  getErrorMessage() {
+    return this.errorMessage;
   }
 }

@@ -4,9 +4,8 @@ import {
   HttpHeaders,
   HttpErrorResponse,
 } from "@angular/common/http";
-import { LogEntry } from "../shared/log-entry";
 import { Bill, BillAdapter } from "./bill";
-import { Observable, throwError } from "rxjs";
+import { throwError } from "rxjs";
 import { map, catchError, retry } from "rxjs/operators";
 import { environment } from "../../environments/environment";
 
@@ -36,7 +35,10 @@ export class BillService {
   public getBillById(id) {
     return this.http
       .get(this.accessPointUrl + "/" + id, { headers: this.headers })
-      .pipe(retry(2));
+      .pipe(
+        retry(2),
+        map((response) => this.adapter.fromJsonToModel(response))
+      );
   }
 
   public getUnpaidBills() {
@@ -95,8 +97,8 @@ export class BillService {
   private handleError(error: HttpErrorResponse) {
     if (error.status === 422) {
       return throwError(
-        "Bills for the selected month have already been created. " +
-          "Please delete bills for the selected month and add them again."
+        "Bills for the selected month/year have already been created. " +
+          "Please select another month or delete bills for the selected month and add them again."
       );
     } else {
       return throwError("Unknown error occurred.");

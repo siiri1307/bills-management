@@ -6,7 +6,7 @@
     <a [routerLink]="" class="skip-login-link" (click)="changeStatusToLoggedIn()">Skip login</a>
   </div>
   <div *ngIf="showLogInFailedMessage" class="alert alert-warning logInFailedMsg">
-    Something went wrong with Google sign-in. Please try again.
+    {{error}}
     <button type="button" class="close" aria-label="Close" (click)="hideErrorMsg()">
       <span aria-hidden="true">&times;</span>
     </button>

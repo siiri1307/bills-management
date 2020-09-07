@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  AfterViewInit,
-  ViewChild,
-  ElementRef,
-  Renderer2,
-} from "@angular/core";
+import { Component, OnInit, AfterViewInit, ViewChild } from "@angular/core";
 import { Bill } from "./bill";
 import { BillService } from "./bill.service";
 import { BudgetService } from "../budget/budget.service";
@@ -23,14 +16,10 @@ import { MatTableDataSource } from "@angular/material/table";
 import { PDFService } from "../pdfs/pdf.service";
 import { saveAs } from "file-saver";
 import { MatSort } from "@angular/material/sort";
-import { GoogleAuthService } from "../google-auth/google-auth.service";
 import { IntegerToMonthNamePipe } from "./month-name.pipe";
-import { PaymentStatusToText } from "./payment-status.pipe";
 import * as _moment from "moment";
 import { FormControl, NgForm } from "@angular/forms";
 import { MatDatepicker, MAT_DATE_FORMATS } from "@angular/material";
-import { subscribeOn } from "rxjs/operators";
-import { FormsModule } from "@angular/forms";
 
 export const MY_FORMATS = {
   parse: {
@@ -53,17 +42,13 @@ const moment = _moment;
     IntegerToMonthNamePipe,
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
-  /*
   animations: [
-    trigger("detailExpand", [
-      state("collapsed", style({ height: "0px", minHeight: "0" })),
-      state("expanded", style({ height: "*" })),
-      transition(
-        "expanded <=> collapsed",
-        animate("225ms cubic-bezier(0.4, 0.0, 0.2, 1)")
-      ),
+    trigger("fadeAlert", [
+      state("visible", style({ opacity: 1 })),
+      transition(":enter", [style({ opacity: 0 }), animate(600)]),
+      transition(":leave", animate(600, style({ opacity: 0 }))),
     ]),
-  ],*/
+  ],
 })
 export class BillListComponent implements OnInit, AfterViewInit {
   date = new FormControl(moment());
@@ -82,35 +67,24 @@ export class BillListComponent implements OnInit, AfterViewInit {
     "edit",
   ];
 
-  expandedElement: Bill | null;
-  _filterText: string;
-
-  alert: string;
-  error: string;
+  alert: string = null;
+  error: string = null;
   selectedMonth: number;
+  showSpinner: boolean = false;
+  spinnerMessage: string;
 
   // query the template to get references to template elements and inject them to a component
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
-  @ViewChild("alertRef", { static: false }) alertRef: ElementRef;
-
-  @ViewChild("errorRef", { static: false }) errorRef: ElementRef;
-
   @ViewChild("sumForm", { read: NgForm, static: false }) sumForm: NgForm;
-
-  showSpinner: boolean = false;
-  spinnerMessage: string;
 
   constructor(
     private billService: BillService,
     private budgetService: BudgetService,
     private logger: LogService,
-    private pdfService: PDFService,
-    private renderer: Renderer2,
-    private googleAuthService: GoogleAuthService,
-    private monthNamePipe: IntegerToMonthNamePipe
+    private pdfService: PDFService
   ) {
     this.billsData = new MatTableDataSource<Bill>();
     this.fetchBills();
@@ -124,7 +98,6 @@ export class BillListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    console.log("Doing initialization.");
     this.billsData.filterPredicate = (bill: Bill, filter: number) => {
       var filterAsNumber = +filter;
       if (filterAsNumber === 0) {
@@ -141,29 +114,53 @@ export class BillListComponent implements OnInit, AfterViewInit {
     this.billsData.sortingDataAccessor = (bill: Bill, property) => {
       switch (property) {
         case "monthToPayFor":
-          return moment("10-" + bill.monthToPayFor + "-" + bill.yearToPayFor);
+          let date = moment(
+            bill.monthToPayFor + "-" + bill.yearToPayFor,
+            "MM-YYYY"
+          );
+          return date;
       }
     };
-    /*
-    this.sumForm.statusChanges.subscribe((result) =>
-      console.log("Vaata siia: " + result)
-    );*/
   }
 
-  toggleSaveDisabledState(bill: Bill) {
-    if (bill.total === null) {
-      this.error = "Sum is required.";
-      this.renderer.addClass(this.errorRef.nativeElement, "show");
+  setAlert(type, message, duration = 1000) {
+    if (type === "error") {
+      this.error = message;
+      window.setTimeout(() => {
+        this.error = null;
+      }, duration);
+    } else if (type === "alert") {
+      this.alert = message;
+      window.setTimeout(() => {
+        this.alert = null;
+      }, duration);
+    }
+  }
+
+  toggleSaveButtonDisabledState(event, bill: Bill) {
+    if (event < 0) {
+      this.setAlert("error", "Sum cannot be negative", 2000);
       bill.saveBtnDisabled = true;
-    } else if (bill.total < 0) {
-      this.error = "Sum cannot be negative";
-      this.renderer.addClass(this.errorRef.nativeElement, "show");
-      bill.saveBtnDisabled = true;
-    } else if (bill.partialPayAmount < 0) {
-      this.error = "Amount cannot be negative";
-      this.renderer.addClass(this.errorRef.nativeElement, "show");
+    } else if (event === null) {
+      this.setAlert("error", "Sum is required.");
       bill.saveBtnDisabled = true;
     } else {
+      bill.total = event;
+      bill.sumToPay = event;
+      bill.partialPayAmount = event;
+      bill.saveBtnDisabled = false;
+    }
+  }
+
+  toggleSaveButtonDisabledStatePartialPayment(event, bill: Bill) {
+    if (event < 0) {
+      this.setAlert("error", "Amount cannot be negative", 2000);
+      bill.saveBtnDisabled = true;
+    } else if (event === null) {
+      this.setAlert("error", "Amount is required.");
+      bill.saveBtnDisabled = true;
+    } else {
+      bill.partialPayAmount = event;
       bill.saveBtnDisabled = false;
     }
   }
@@ -224,8 +221,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
         this.billsData.data = data;
       },
       (err) => {
-        this.alert = err;
-        this.renderer.addClass(this.alertRef.nativeElement, "show");
+        this.setAlert("alert", err, 3000);
       }
     );
   }
@@ -238,16 +234,20 @@ export class BillListComponent implements OnInit, AfterViewInit {
 
   delete(bill): void {
     this.billService.remove(bill).subscribe(() => {
+      let deletedBillIndex = this.selectedBills.indexOf(bill);
+      if (deletedBillIndex > -1) {
+        this.selectedBills.splice(deletedBillIndex, 1);
+      }
       this.fetchBills();
     });
   }
 
   hideAlert() {
-    this.renderer.removeClass(this.alertRef.nativeElement, "show");
+    this.alert = null;
   }
 
   hideError() {
-    this.renderer.removeClass(this.errorRef.nativeElement, "show");
+    this.error = null;
   }
 
   trackById(index: number, bill: Bill) {
@@ -257,8 +257,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
 
   downloadBillsForSelectedMonthsAsPDF() {
     if (this.selectedBills.length == 0) {
-      this.alert = "No bills have been selected for export.";
-      this.renderer.addClass(this.alertRef.nativeElement, "show");
+      this.setAlert("alert", "No bills have been selected for export.", 3000);
     } else {
       this.showSpinner = true;
       this.spinnerMessage = "Fetching PDF bills ...";
@@ -273,8 +272,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
         (err) => {
           this.showSpinner = false;
           this.spinnerMessage = "";
-          this.alert = err;
-          this.renderer.addClass(this.alertRef.nativeElement, "show");
+          this.setAlert("error", err, 3000);
         }
       );
     }
@@ -282,8 +280,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
 
   sendBillsWithEmail() {
     if (this.selectedBills.length == 0) {
-      this.alert = "No bills have been selected for sending.";
-      this.renderer.addClass(this.alertRef.nativeElement, "show");
+      this.setAlert("alert", "No bills have been selected for sending.", 3000);
     } else {
       this.showSpinner = true;
       this.spinnerMessage = "Sending email ...";
@@ -291,14 +288,16 @@ export class BillListComponent implements OnInit, AfterViewInit {
         (response) => {
           this.showSpinner = false;
           this.spinnerMessage = "";
-          this.alert = "Your email has been successfully sent.";
-          this.renderer.addClass(this.alertRef.nativeElement, "show");
+          this.setAlert(
+            "alert",
+            "Your email has been successfully sent.",
+            3000
+          );
         },
         (err) => {
           this.showSpinner = false;
           this.spinnerMessage = "";
-          this.alert = err;
-          this.renderer.addClass(this.alertRef.nativeElement, "show");
+          this.setAlert("error", err, 3000);
         }
       );
     }
@@ -318,19 +317,36 @@ export class BillListComponent implements OnInit, AfterViewInit {
   }
 
   edit(bill: Bill, event: any) {
-    if (event.target.value === "Edit") {
+    if (event.target.innerHTML.trim() === "Edit") {
       bill.canEdit = true;
       event.target.value = "Save";
       event.target.innerHTML = "Save";
-    } else if (event.target.value === "Save") {
+    } else if (event.target.innerHTML.trim() === "Save") {
       bill.canEdit = false;
       event.target.value = "Edit";
       event.target.innerHTML = "Edit";
-      //bill.sumToPay = bill.total;
-      //bill.partialPayAmount = bill.total;
       this.updateBill(bill);
-      //this.billService.update(bill).subscribe();
     }
+  }
+
+  cancelEdit(bill: Bill) {
+    this.billService.getBillById(bill.id).subscribe(
+      (response) => {
+        let billFromDb = response;
+        bill.total = billFromDb.total;
+        bill.sumToPay = billFromDb.sumToPay;
+        bill.partialPayAmount = billFromDb.partialPayAmount;
+        bill.comment = billFromDb.comment;
+        let editBtn = document.getElementById("b" + bill.id);
+        editBtn.innerHTML = "Edit";
+        bill.canEdit = false;
+        if (bill.saveBtnDisabled) {
+          bill.saveBtnDisabled = false;
+        }
+      },
+      (error) => console.log("Could not get bill by ID from DB")
+    );
+    bill.canEdit = false;
   }
 
   setSelectedYear(normalizedYear: _moment.Moment) {

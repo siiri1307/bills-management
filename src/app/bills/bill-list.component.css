@@ -115,7 +115,8 @@ th.mat-sort-header-sorted {
   word-break: break-word;
 }
 
-.edit-bill-btn {
+.cancel-edit-btn {
+  margin-left: 5px;
 }
 
 th {
