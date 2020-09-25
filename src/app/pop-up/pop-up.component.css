@@ -1,0 +1,57 @@
+.popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  height: 280px;
+  border: solid;
+  border-width: thin;
+  background-color: white;
+  border-radius: 3px;
+  display: grid;
+  grid-template-rows: 60px 150px 70px;
+  grid-template-columns: auto auto;
+  column-gap: 50px;
+  z-index: 3;
+}
+
+.title {
+  margin-top: 10px;
+  margin-left: 20px;
+  grid-column: 1 / 3;
+  grid-row: 1;
+  font-size: medium;
+  font-weight: bold;
+}
+
+.emails {
+  margin-left: 20px;
+  grid-column: 1 / 3;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+label {
+  margin-left: 7px;
+}
+
+.btn-close-popup {
+  grid-column: 1;
+  grid-row: 3;
+  width: 90px;
+  height: 35px;
+  margin-bottom: 20px;
+  margin-left: auto;
+}
+
+.btn-send-emails {
+  grid-column: 2;
+  grid-row: 3;
+  width: 90px;
+  height: 35px;
+  margin-right: auto;
+  margin-bottom: 20px;
+}

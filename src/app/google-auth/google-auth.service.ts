@@ -1,8 +1,5 @@
 import { Injectable } from "@angular/core";
-import {
-  AuthService,
-  GoogleLoginProvider,
-} from "angularx-social-login";
+import { AuthService, GoogleLoginProvider } from "angularx-social-login";
 import { Router } from "@angular/router";
 import { BehaviorSubject, Observable } from "rxjs";
 import { HttpHeaders, HttpClient } from "@angular/common/http";
@@ -58,10 +55,11 @@ export class GoogleAuthService {
         (error) => {
           if (error.status == 401) {
             console.log("Google issued JWT is not valid!");
-            this.errorMessage = "Something went wrong with Google sign-in. Please try again."
-          }
-          else if (error.status == 403) {
-            this.errorMessage = "You are not authorized to use this system. Please contact the admin to get access."
+            this.errorMessage =
+              "Something went wrong with Google sign-in. Please try again.";
+          } else if (error.status == 403) {
+            this.errorMessage =
+              "You are not authorized to use this system. Please contact the admin to get access.";
           }
           this.logInFailed.next(true);
         }
@@ -71,18 +69,17 @@ export class GoogleAuthService {
 
   signOut(): void {
     //this mocks signing out, when user skipped signing in (only in dev mode)
-    this.authService.authState.subscribe(user => {
+    this.authService.authState.subscribe((user) => {
       if (user == null) {
         this.router.navigateByUrl("");
         this.loggedIn.next(false);
-      }
-      else {
+      } else {
         this.authService.signOut().then(() => {
           this.loggedIn.next(false);
           this.router.navigateByUrl("");
         });
       }
-    })
+    });
   }
 
   getLogInFailedStatus(): Observable<boolean> {
@@ -112,15 +109,6 @@ export class GoogleAuthService {
     return this.http.post(this.serviceUrl + "/validate", idToken, {
       headers: this.headers,
     });
-  }
-
-  sendEmails() {
-    //var userEmail = this.userEmail.asObservable();
-    return this.http.post(
-      this.serviceUrl + "/send",
-      JSON.stringify(this.temp_token),
-      { headers: this.headers }
-    );
   }
 
   setIsLoggedIn() {

@@ -13,7 +13,7 @@ import {
 } from "@angular/animations";
 import { MatPaginator } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
-import { PDFService } from "../pdfs/pdf.service";
+import { EmailService } from "../email/email.service";
 import { saveAs } from "file-saver";
 import { MatSort } from "@angular/material/sort";
 import { IntegerToMonthNamePipe } from "./month-name.pipe";
@@ -72,6 +72,9 @@ export class BillListComponent implements OnInit, AfterViewInit {
   selectedMonth: number;
   showSpinner: boolean = false;
   spinnerMessage: string;
+  popUpOpen: boolean = false;
+  configuredEmails: string[];
+  showOverlay: boolean = false;
 
   // query the template to get references to template elements and inject them to a component
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -84,11 +87,14 @@ export class BillListComponent implements OnInit, AfterViewInit {
     private billService: BillService,
     private budgetService: BudgetService,
     private logger: LogService,
-    private pdfService: PDFService
+    private emailService: EmailService
   ) {
     this.billsData = new MatTableDataSource<Bill>();
     this.fetchBills();
     this.selectedBills = new Array<Bill>();
+    this.emailService.get().subscribe((emails: string) => {
+      this.configuredEmails = emails.split(";");
+    });
   }
 
   fetchBills(): void {
@@ -261,7 +267,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
     } else {
       this.showSpinner = true;
       this.spinnerMessage = "Fetching PDF bills ...";
-      this.pdfService.getBillsZip(this.selectedBills).subscribe(
+      this.emailService.getBillsZip(this.selectedBills).subscribe(
         (doc) => {
           this.showSpinner = false;
           this.spinnerMessage = "";
@@ -278,13 +284,27 @@ export class BillListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  sendBillsWithEmail() {
+  openPopUp() {
     if (this.selectedBills.length == 0) {
       this.setAlert("alert", "No bills have been selected for sending.", 3000);
     } else {
-      this.showSpinner = true;
-      this.spinnerMessage = "Sending email ...";
-      this.pdfService.sendBillsWithEmail(this.selectedBills).subscribe(
+      this.popUpOpen = true;
+      this.showOverlay = true;
+    }
+  }
+
+  onPopUpClosed(event: any) {
+    this.popUpOpen = false;
+    this.showOverlay = false;
+  }
+
+  sendBillsWithEmail(selectedEmails: string[]) {
+    this.showOverlay = false;
+    this.showSpinner = true;
+    this.spinnerMessage = "Sending email ...";
+    this.emailService
+      .sendBillsWithEmail(this.selectedBills, selectedEmails)
+      .subscribe(
         (response) => {
           this.showSpinner = false;
           this.spinnerMessage = "";
@@ -300,7 +320,6 @@ export class BillListComponent implements OnInit, AfterViewInit {
           this.setAlert("error", err, 3000);
         }
       );
-    }
   }
 
   toggleSelect(bill: Bill) {

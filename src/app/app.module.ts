@@ -41,6 +41,7 @@ import {
 import { ReactiveFormsModule } from "@angular/forms";
 import { SpinnerComponent } from "./spinner/spinner.component";
 import { PaymentStatusToText } from "src/app/bills/payment-status.pipe";
+import { PopUpComponent } from './pop-up/pop-up.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -54,6 +55,7 @@ import { PaymentStatusToText } from "src/app/bills/payment-status.pipe";
     HeaderComponent,
     SpinnerComponent,
     PaymentStatusToText,
+    PopUpComponent,
   ],
   imports: [
     BrowserModule,

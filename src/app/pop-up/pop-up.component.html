@@ -1,0 +1,27 @@
+<div class="popup" *ngIf="popUpOpen">
+  <div class="title">Select emails to send the bills to</div>
+  <div class="emails">
+    <div *ngFor="let email of emails">
+      <input
+        type="checkbox"
+        name="email"
+        (change)="checkedStateChanged(email, $event)"
+      />
+      <label attr.for="email">{{ email }}</label>
+    </div>
+  </div>
+
+  <button
+    class="btn btn-danger btn-sm btn-close-popup"
+    (click)="closePopUp(false)"
+  >
+    Cancel
+  </button>
+  <button
+    class="btn btn-success btn-sm btn-send-emails"
+    (click)="sendEmails()"
+    [disabled]="selectedEmails.length == 0"
+  >
+    Send
+  </button>
+</div>
