@@ -51,9 +51,10 @@ const moment = _moment;
   ],
 })
 export class BillListComponent implements OnInit, AfterViewInit {
-  date = new FormControl(moment());
+ 
   billsData;
   selectedBills: Array<Bill>;
+  date = null;
   columnsToDisplay = [
     "select",
     "flat",
@@ -61,8 +62,8 @@ export class BillListComponent implements OnInit, AfterViewInit {
     "sumToPay",
     "monthToPayFor",
     "paymentDeadline",
-    //"delete",
     "paid",
+    "loan",
     "comment",
     "edit",
   ];
@@ -100,6 +101,8 @@ export class BillListComponent implements OnInit, AfterViewInit {
   fetchBills(): void {
     this.billService.get().subscribe((data: any) => {
       this.billsData.data = data;
+      let latestPeriod = this.getLatestAddedBillPeriod();
+      this.increaseCalendarDateByMonth(latestPeriod);
     });
   }
 
@@ -128,6 +131,24 @@ export class BillListComponent implements OnInit, AfterViewInit {
       }
     };
   }
+  
+  getLatestAddedBillPeriod() {
+    let latestBillPeriod = moment("01/1970", "MM/YYYY");
+    
+    for(let bill of this.billsData.data){
+      let billPeriod = moment(bill.monthToPayFor + "/" + bill.yearToPayFor, "MM/YYYY");
+      if(billPeriod.isAfter(latestBillPeriod)){
+        latestBillPeriod = billPeriod
+      }
+    }
+    
+    return latestBillPeriod;
+  }
+  
+  increaseCalendarDateByMonth(latestBillPeriod) {
+    let nextMonth = latestBillPeriod.add(1, "M");
+    this.date = new FormControl(nextMonth);
+  }
 
   setAlert(type, message, duration = 1000) {
     if (type === "error") {
@@ -143,7 +164,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  toggleSaveButtonDisabledState(event, bill: Bill) {
+  validateTotalInput(event, bill: Bill) {
     if (event < 0) {
       this.setAlert("error", "Sum cannot be negative", 2000);
       bill.saveBtnDisabled = true;
@@ -158,7 +179,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  toggleSaveButtonDisabledStatePartialPayment(event, bill: Bill) {
+  validatePartialPaymentInput(event, bill: Bill) {
     if (event < 0) {
       this.setAlert("error", "Amount cannot be negative", 2000);
       bill.saveBtnDisabled = true;
@@ -167,6 +188,17 @@ export class BillListComponent implements OnInit, AfterViewInit {
       bill.saveBtnDisabled = true;
     } else {
       bill.partialPayAmount = event;
+      bill.saveBtnDisabled = false;
+    }
+  }
+  
+  validateLoanInput(event, bill: Bill) {
+    if (event < 0) {
+      this.setAlert("error", "Amount cannot be negative", 2000);
+      bill.saveBtnDisabled = true;
+    } 
+    else {
+      bill.loanedAmount = event;
       bill.saveBtnDisabled = false;
     }
   }
@@ -225,6 +257,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
     this.billService.postBillsForSelectedMonth(formattedMonthYear).subscribe(
       (data: any) => {
         this.billsData.data = data;
+        this.increaseCalendarDateByMonth(this.getLatestAddedBillPeriod());
       },
       (err) => {
         this.setAlert("alert", err, 3000);
@@ -356,6 +389,8 @@ export class BillListComponent implements OnInit, AfterViewInit {
         bill.sumToPay = billFromDb.sumToPay;
         bill.partialPayAmount = billFromDb.partialPayAmount;
         bill.comment = billFromDb.comment;
+        bill.paymentDeadline = billFromDb.paymentDeadline;
+        bill.loanedAmount = billFromDb.loanedAmount;
         let editBtn = document.getElementById("b" + bill.id);
         editBtn.innerHTML = "Edit";
         bill.canEdit = false;

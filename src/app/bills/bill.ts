@@ -19,6 +19,7 @@ export class Bill {
   "canEdit": boolean;
   "saveBtnDisabled": boolean;
   "comment": string;
+  "loanedAmount": number;
 
   constructor(
     id: number,
@@ -32,7 +33,8 @@ export class Bill {
     partialPay: number,
     status: number,
     logs: LogEntry[],
-    comment: string
+    comment: string,
+    loanedAmount: number
   ) {
     this.id = id;
     this.number = number;
@@ -50,6 +52,7 @@ export class Bill {
     this.canEdit = false;
     this.saveBtnDisabled = false;
     this.comment = comment;
+    this.loanedAmount = loanedAmount;
   }
 }
 
@@ -72,7 +75,8 @@ export class BillAdapter implements Adapter<Bill> {
       (item.partialPayAmount = item.sumToPay),
       item.status,
       item.logs,
-      item.comment
+      item.comment,
+      item.loan
     );
   }
 
@@ -89,6 +93,7 @@ export class BillAdapter implements Adapter<Bill> {
       Status: bill.status,
       Logs: bill.logs,
       Comment: bill.comment,
+      Loan: bill.loanedAmount
     };
 
     return <JSON>o;

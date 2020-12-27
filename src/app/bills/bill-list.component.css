@@ -71,43 +71,43 @@ th.mat-sort-header-sorted {
 }
 
 .mat-column-select {
-  width: 11.11%;
+  width: 10%;
 }
 
 .mat-column-flat {
-  width: 11.11%;
+  width: 10%;
 }
 
 .mat-column-total {
-  width: 11.11%;
+  width: 10%;
 }
 
 .mat-column-sumToPay {
-  width: 11.11%;
+  width: 10%;
 }
 
 .mat-column-monthToPayFor {
-  width: 11.11%;
+  width: 10%;
 }
 
 .mat-column-paymentDeadline {
-  width: 11.11%;
-}
-
-.mat-column-edit {
-  width: 11.11%;
-}
-
-.mat-column-delete {
-  width: 11.11%;
+  width: 10%;
 }
 
 .mat-column-paid {
-  width: 11.11%;
+  width: 10%;
+}
+
+.mat-column-loan {
+  width: 10%;
 }
 
 .mat-column-comment {
-  width: 11.11%;
+  width: 10%;
+}
+
+.mat-column-edit {
+  width: 10%;
 }
 
 #comment {
