@@ -72,7 +72,7 @@ export class BillAdapter implements Adapter<Bill> {
       item.monthToPayFor,
       item.yearToPayFor,
       item.paymentDeadline,
-      (item.partialPayAmount = item.sumToPay),
+      (item.partialPayAmount = 0),
       item.status,
       item.logs,
       item.comment,

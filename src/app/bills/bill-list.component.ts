@@ -174,7 +174,6 @@ export class BillListComponent implements OnInit, AfterViewInit {
     } else {
       bill.total = event;
       bill.sumToPay = event;
-      bill.partialPayAmount = event;
       bill.saveBtnDisabled = false;
     }
   }
@@ -199,6 +198,7 @@ export class BillListComponent implements OnInit, AfterViewInit {
     } 
     else {
       bill.loanedAmount = event;
+      bill.sumToPay = bill.total - bill.loanedAmount;
       bill.saveBtnDisabled = false;
     }
   }
@@ -218,16 +218,17 @@ export class BillListComponent implements OnInit, AfterViewInit {
       bill.status = 1;
     }
 
-    const log = this.logger.log(
-      "Paid " + bill.partialPayAmount + " EUR on " + new Date() + ".",
-      bill.comment
-    );
-
-    bill.logs.push(log);
+    if(bill.partialPayAmount !== 0){
+      const log = this.logger.log(
+        "Paid " + bill.partialPayAmount + " EUR on " + new Date() + ".",
+        bill.comment
+      );
+      bill.logs.push(log);
+    }
 
     this.saveBudgetEntry(bill.partialPayAmount);
 
-    bill.partialPayAmount = bill.sumToPay;
+    bill.partialPayAmount = 0;
 
     this.billService.update(bill).subscribe();
   }
@@ -387,7 +388,6 @@ export class BillListComponent implements OnInit, AfterViewInit {
         let billFromDb = response;
         bill.total = billFromDb.total;
         bill.sumToPay = billFromDb.sumToPay;
-        bill.partialPayAmount = billFromDb.partialPayAmount;
         bill.comment = billFromDb.comment;
         bill.paymentDeadline = billFromDb.paymentDeadline;
         bill.loanedAmount = billFromDb.loanedAmount;

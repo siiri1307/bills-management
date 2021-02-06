@@ -154,11 +154,9 @@
     <ng-container matColumnDef="paid">
       <th mat-header-cell *matHeaderCellDef>Paid</th>
       <td mat-cell *matCellDef="let bill">
-        <span *ngIf="!bill.canEdit && bill.status === 3">0</span>
-        <span *ngIf="!bill.canEdit && bill.status === 1">{{ bill.total }}</span>
-        <span *ngIf="!bill.canEdit && bill.status === 2">{{
-          bill.total - bill.sumToPay
-        }}</span>
+        <span *ngIf="!bill.canEdit">
+         {{ bill.total - bill.sumToPay - bill.loanedAmount}}
+        </span>
         <input
           id="paidAmount"
           name="paidAmount"
