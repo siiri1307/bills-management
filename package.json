@@ -37,7 +37,7 @@
     "html2canvas": "^1.0.0-rc.1",
     "jquery": "^3.4.1",
     "jspdf": "^1.5.3",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "ng2-validation": "^4.2.0",
     "path": "^0.12.7",
     "popper.js": "^1.16.0",
